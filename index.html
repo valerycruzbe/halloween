@@ -122,16 +122,86 @@ body.lit .flame { opacity: 1; }
 .glint.on { animation: glint 4s ease-in-out infinite; }
 @keyframes glint { 0%, 70%, 100% { opacity: 0; transform: scale(.5); } 80% { opacity: .5; transform: scale(1.6); } }
 
-/* ---------- entrada ---------- */
+/* ---------- entrada: el sobre negro ---------- */
 .gate {
-  position: fixed; inset: 0; z-index: 40; background: #000; border: 0; width: 100%; color: inherit;
-  display: grid; place-items: center; text-align: center; cursor: pointer; font: inherit; padding: 24px;
-  transition: opacity 1.4s, visibility 1.4s;
+  position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; align-content: center; gap: 34px;
+  background: radial-gradient(70% 55% at 50% 46%, #2a221c 0%, #120e0b 45%, #000 85%);
+  transition: opacity 1.2s, visibility 1.2s; overflow: hidden;
 }
 .gate.gone { opacity: 0; visibility: hidden; }
-.gate .t { display: block; font-style: italic; font-size: clamp(30px, 8vw, 46px); line-height: 1.15; color: #d8ccb6; }
-.gate .s { display: block; color: #7d7062; margin-top: 12px; font-size: 17px; letter-spacing: .04em; }
-.gate:focus-visible .t { outline: 2px solid var(--flame); outline-offset: 10px; }
+.envelope {
+  position: relative; width: min(80vw, 440px); aspect-ratio: 1.46; padding: 0; border: 0; background: none;
+  cursor: pointer; transform: rotate(-4deg);
+  animation: arrive 1.9s cubic-bezier(.16,.72,.28,1) both .3s;
+}
+.envelope:focus-visible { outline: none; }
+.envelope:focus-visible .seal { box-shadow: 0 0 0 2px var(--flame), 0 4px 8px rgba(0,0,0,.7); }
+@keyframes arrive {
+  0%   { transform: translate(-115vw, -55vh) rotate(-42deg) scale(1.12); }
+  62%  { transform: translate(3vw, 1.5vh) rotate(4deg) scale(1.01); }
+  80%  { transform: translate(-.6vw, -.3vh) rotate(-6deg) scale(1); }
+  100% { transform: translate(0, 0) rotate(-4deg) scale(1); }
+}
+.env-shadow {
+  position: absolute; inset: 6% 4% -6%; border-radius: 6px; background: #000; filter: blur(22px); opacity: .85;
+  transform: translateY(14px); animation: landShadow 1.9s cubic-bezier(.16,.72,.28,1) both .3s;
+}
+@keyframes landShadow { 0% { opacity: 0; transform: translateY(80px) scale(1.2); filter: blur(50px); } 100% { opacity: .85; transform: translateY(14px); filter: blur(22px); } }
+.paper {
+  position: absolute; inset: 0; border-radius: 3px;
+  background-color: #0e0d0c;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='q'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23q)'/></svg>"),
+    linear-gradient(155deg, #1d1b19 0%, #0b0a09 55%, #151312 100%);
+}
+.lining { /* interior rojo, se ve al abrir */
+  position: absolute; inset: 0; border-radius: 3px; overflow: hidden;
+  background: repeating-linear-gradient(45deg, #3a0910 0 6px, #2c060b 6px 12px);
+}
+.lining::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 50% 10%, rgba(255,190,120,.25), transparent 70%); opacity: 0; transition: opacity .8s .5s; }
+.gate.opening .lining::after { opacity: 1; }
+.fold { position: absolute; inset: 0; }
+.fold.l { clip-path: polygon(0 0, 52% 52%, 0 100%); background: linear-gradient(90deg, #121110, #0a0909); }
+.fold.r { clip-path: polygon(100% 0, 48% 52%, 100% 100%); background: linear-gradient(270deg, #121110, #0a0909); }
+.fold.b { clip-path: polygon(0 100%, 50% 40%, 100% 100%); background: linear-gradient(0deg, #0d0c0b, #191716); }
+.fold-edge { position: absolute; inset: 0; pointer-events: none; }
+.fold-edge svg { width: 100%; height: 100%; display: block; }
+.flap {
+  position: absolute; left: 0; right: 0; top: 0; height: 60%;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: 50% 0; transform: perspective(900px) rotateX(0deg);
+  background: linear-gradient(180deg, #1f1d1b, #0f0e0d 80%);
+}
+.gate.opening .flap { animation: flapOpen 1s cubic-bezier(.5,0,.2,1) forwards .45s; }
+@keyframes flapOpen {
+  0%     { transform: perspective(900px) rotateX(0deg); background: linear-gradient(180deg, #1f1d1b, #0f0e0d 80%); }
+  49.9%  { background: linear-gradient(180deg, #1f1d1b, #0f0e0d 80%); }
+  50%    { background: repeating-linear-gradient(45deg, #3a0910 0 6px, #2c060b 6px 12px); }
+  100%   { transform: perspective(900px) rotateX(180deg); background: repeating-linear-gradient(45deg, #3a0910 0 6px, #2c060b 6px 12px); }
+}
+.seal {
+  position: absolute; left: 50%; top: 60%; width: 21%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  border-radius: 48% 52% 50% 46% / 51% 46% 54% 49%;
+  background: radial-gradient(circle at 36% 30%, #8a1826 0%, #5a0c16 38%, #33050b 75%, #22030a 100%);
+  box-shadow: inset 0 2px 3px rgba(255,255,255,.16), inset 0 -4px 7px rgba(0,0,0,.6), 0 4px 8px rgba(0,0,0,.7);
+}
+.seal::before { content: ""; position: absolute; inset: 13%; border-radius: 50%; box-shadow: inset 0 1px 2px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.12); }
+.seal i { /* toro grabado en la cera */
+  position: absolute; inset: 18%; background: #160105;
+  -webkit-mask: url("img/bull.png") center / contain no-repeat; mask: url("img/bull.png") center / contain no-repeat;
+  filter: drop-shadow(0 1px 0 rgba(255,170,170,.35)) drop-shadow(0 -1px 0 rgba(0,0,0,.5));
+}
+.seal .half { position: absolute; inset: 0; border-radius: inherit; background: inherit; box-shadow: inherit; }
+.gate.opening .seal { animation: crack .55s ease-in forwards; }
+@keyframes crack { 0% { transform: translate(-50%, -50%) scale(1); } 30% { transform: translate(-50%, -50%) scale(1.06); } 100% { transform: translate(-50%, 40%) scale(.9) rotate(18deg); opacity: 0; } }
+.gate.opening .envelope { animation: sink 1.1s ease-in forwards 1.35s; }
+@keyframes sink { to { transform: translateY(18vh) rotate(-2deg) scale(.92); opacity: 0; } }
+.gate-hint { margin: 0; font-style: italic; font-size: 18px; color: #b9ab94; letter-spacing: .03em; opacity: 0; animation: fadeIn 1s ease forwards 2.3s; transition: opacity .4s; }
+.gate.opening .gate-hint { opacity: 0 !important; animation: none; }
+@keyframes fadeIn { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .envelope, .env-shadow, .gate-hint { animation: none; opacity: 1; }
+}
 
 /* ---------- tarjetas de presentación ---------- */
 .veil {
@@ -154,7 +224,7 @@ body.lit .flame { opacity: 1; }
   outline: none;
 }
 .bcard.flipped { transform: rotateY(180deg); }
-.bcard:focus-visible .face { box-shadow: 0 0 0 2px var(--flame), 0 30px 50px rgba(0,0,0,.75); }
+.bcard:focus-visible .face { box-shadow: 0 0 0 1px rgba(244,181,68,.6), 0 30px 50px rgba(0,0,0,.75); }
 .face {
   position: absolute; inset: 0; border-radius: 4px; overflow: hidden;
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
@@ -212,7 +282,7 @@ body.lit .flame { opacity: 1; }
 <body>
 
 <div class="room" id="room">
-  <p class="writing" id="writing">Busca la máscara<small id="how">Mueve el candelabro</small></p>
+  <p class="writing" id="writing">Mueve el candelabro</p>
 
   <button class="relic" id="mask" type="button" aria-label="Máscara blanca: abrir la tarjeta">
     <img src="img/mascara.png" alt="" width="160" height="188">
@@ -231,9 +301,18 @@ body.lit .flame { opacity: 1; }
   <span class="flame l"></span><span class="flame m"></span><span class="flame r"></span>
 </div>
 
-<button class="gate" id="gate" type="button">
-  <span><span class="t">Toca para encender el candelabro</span><span class="s">Sube el volumen</span></span>
-</button>
+<div class="gate" id="gate">
+  <button class="envelope" id="envelope" type="button" aria-label="Abrir el sobre">
+    <span class="env-shadow"></span>
+    <span class="lining"></span>
+    <span class="paper" style="clip-path: inset(40% 0 0 0)"></span>
+    <span class="fold l"></span><span class="fold r"></span><span class="fold b"></span>
+    <span class="fold-edge"><svg viewBox="0 0 146 100" preserveAspectRatio="none"><path d="M0 100 L73 40 L146 100" fill="none" stroke="rgba(255,255,255,.07)" stroke-width=".5" vector-effect="non-scaling-stroke"/><path d="M0 0 L75.9 52 M146 0 L70 52" fill="none" stroke="rgba(0,0,0,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></svg></span>
+    <span class="flap"></span>
+    <span class="seal"><i></i></span>
+  </button>
+  <p class="gate-hint">Ábrelo con el volumen arriba</p>
+</div>
 
 <!-- Tarjeta 1: los datos -->
 <div class="veil" id="veil1" role="dialog" aria-modal="true" aria-label="Día, hora y ubicación">
@@ -287,7 +366,7 @@ body.lit .flame { opacity: 1; }
    ========================================================= */
 const CONFIG = {
   dia: "23 de octubre",
-  hora: "9 pm",
+  hora: "9 pm until ????",
   maps: "https://maps.app.goo.gl/fkLqFasmJuMbtfCW7",
   pinterest: "https://pin.it/2v7jY3pK0"
 };
@@ -302,7 +381,6 @@ $("day").textContent = CONFIG.dia;
 $("hour").textContent = CONFIG.hora;
 $("maps").href = CONFIG.maps;
 $("pin").href = CONFIG.pinterest;
-$("how").textContent = touch ? "Arrastra el candelabro con el dedo" : "Mueve el candelabro";
 
 /* =========================================================
    El candelabro: sigue al cursor o al dedo con inercia
@@ -417,6 +495,16 @@ function paper(vol = 0.12) {
   g.gain.exponentialRampToValueAtTime(vol * .6, t + .2); g.gain.exponentialRampToValueAtTime(0.0001, t + .5);
   s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + .6);
 }
+function crackWax() {
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  [0, .045, .09].forEach((d, i) => {
+    const s = ctx.createBufferSource(); s.buffer = noiseBuf(.04);
+    const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 1400 + i * 700; f.Q.value = 3;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.35 - i * .08, t + d); g.gain.exponentialRampToValueAtTime(0.0001, t + d + .05);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t + d);
+  });
+}
 function bell(freq = 147, vol = .2) {
   if (!ctx) return;
   const t = ctx.currentTime, c = ctx.createOscillator(), m = ctx.createOscillator(), mg = ctx.createGain(), g = ctx.createGain();
@@ -436,11 +524,17 @@ $("sound").addEventListener("click", (e) => { e.stopPropagation(); muted = !mute
 /* ---------- encender ---------- */
 const found = { mask: false, anti: false };
 let glintTimer;
-$("gate").addEventListener("click", () => {
-  startAudio(); strike();
-  $("gate").classList.add("gone");
-  setTimeout(() => { document.body.classList.add("lit"); if (!touch) document.body.classList.add("playing"); }, 450);
-  glintTimer = setTimeout(() => { if (!found.mask) $("glint").classList.add("on"); }, 14000);
+$("envelope").addEventListener("click", () => {
+  const gate = $("gate");
+  if (gate.classList.contains("opening")) return;
+  startAudio();
+  gate.classList.add("opening");
+  setTimeout(() => crackWax(), 60);
+  setTimeout(() => paper(.14), 500);
+  const total = reduce ? 300 : 2200;
+  setTimeout(() => { strike(); gate.classList.add("gone"); }, total - 300);
+  setTimeout(() => { document.body.classList.add("lit"); if (!touch) document.body.classList.add("playing"); }, total);
+  glintTimer = setTimeout(() => { if (!found.mask) $("glint").classList.add("on"); }, total + 14000);
 });
 
 /* ---------- tarjetas ---------- */
@@ -457,7 +551,6 @@ function openFrom(relic, veilId) {
   // primero el frente con el cráneo, luego se voltea sola
   clearTimeout(flipTimer);
   flipTimer = setTimeout(() => { if (openCard === veil) { card.classList.add("flipped"); paper(.08); } }, 1900);
-  setTimeout(() => card.focus({ preventScroll: true }), 1000);
 }
 function swapWriting(html) {
   const w = $("writing"); w.classList.add("fade");
@@ -472,17 +565,14 @@ function closeCard() {
   if (id === "veil1" && !found.anti) {
     found.anti = true;
     const a = $("anti"); a.classList.remove("asleep"); a.tabIndex = 0;
-    swapWriting("Ahora el antifaz");
   }
-  if (id === "veil2") swapWriting(null);
-  if (opener) opener.focus({ preventScroll: true });
 }
 document.querySelectorAll(".bcard").forEach((c) => {
   const flip = () => { clearTimeout(flipTimer); c.classList.toggle("flipped"); paper(.08); };
   c.addEventListener("click", (e) => { if (e.target.closest("a")) return; flip(); });
   c.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && !e.target.closest("a")) { e.preventDefault(); flip(); } });
 });
-$("mask").addEventListener("click", () => { found.mask = true; clearTimeout(glintTimer); $("glint").classList.remove("on"); openFrom($("mask"), "veil1"); });
+$("mask").addEventListener("click", () => { found.mask = true; swapWriting(null); clearTimeout(glintTimer); $("glint").classList.remove("on"); openFrom($("mask"), "veil1"); });
 $("anti").addEventListener("click", () => openFrom($("anti"), "veil2"));
 document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", closeCard));
 document.querySelectorAll(".veil").forEach((v) => v.addEventListener("click", (e) => { if (e.target === v) closeCard(); }));
