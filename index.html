@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Valeria te invoca · Halloween</title>
+<meta name="description" content="Fiesta de Halloween. Sábado 31 de octubre, 9:00 pm. Abre la invitación.">
+<meta name="theme-color" content="#1E0609">
+
+<!-- Vista previa en WhatsApp -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Valeria te invoca 🕯️">
+<meta property="og:description" content="Halloween, sábado 31 de octubre a las 9 pm. Abre la invitación con sonido.">
+<meta property="og:url" content="https://valerycruzbe.github.io/halloween/">
+<meta property="og:image" content="https://valerycruzbe.github.io/halloween/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+@font-face { font-family: "Pirata One"; src: url("fonts/pirata-one.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Fell"; src: url("fonts/fell.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Fell"; font-style: italic; src: url("fonts/fell-italic.woff2") format("woff2"); font-display: swap; }
+
+:root {
+  --night: #1E0609;
+  --board-hi: #6E2229;
+  --board-lo: #3A0D11;
+  --bone: #EADBB8;
+  --bone-dim: rgba(234, 219, 184, .55);
+  --wax: #F4B544;
+  --ash: #A8927C;
+  --display: "Pirata One", "UnifrakturMaguntia", Georgia, serif;
+  --body: "Fell", "IM Fell English", Georgia, "Times New Roman", serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--night);
+  color: var(--bone);
+  font-family: var(--body);
+  font-size: 19px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+body.locked { overflow: hidden; }
+
+/* luz de vela que respira sobre todo */
+.glow {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(80% 55% at 50% 30%, rgba(244,181,68,.16), transparent 70%);
+  animation: breathe 3.2s ease-in-out infinite;
+}
+.grain {
+  position: fixed; inset: -50%; pointer-events: none; z-index: 5; opacity: .09;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain .8s steps(4) infinite;
+}
+@keyframes breathe { 0%,100% { opacity: .85 } 37% { opacity: 1 } 52% { opacity: .7 } 70% { opacity: .95 } }
+@keyframes grain { 0% { transform: translate(0,0) } 25% { transform: translate(-3%,2%) } 50% { transform: translate(2%,-3%) } 75% { transform: translate(-1%,3%) } }
+
+/* ---------- Pantalla de inicio: la vela ---------- */
+.gate {
+  position: fixed; inset: 0; z-index: 20;
+  display: grid; place-items: center; text-align: center;
+  background: radial-gradient(60% 45% at 50% 45%, #2C0A0E, #0E0204 75%);
+  transition: opacity 1.2s ease, visibility 1.2s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border: 0; width: 100%; color: inherit; font: inherit; padding: 0;
+}
+.gate.gone { opacity: 0; visibility: hidden; }
+.gate-inner { display: grid; justify-items: center; gap: 28px; }
+.candle { position: relative; width: 44px; height: 170px; }
+.candle .stick {
+  position: absolute; bottom: 0; left: 0; width: 44px; height: 120px;
+  background: linear-gradient(90deg, #cdbb94, var(--bone) 40%, #b9a47c);
+  border-radius: 6px 6px 3px 3px;
+}
+.candle .stick::before { /* cera escurrida */
+  content: ""; position: absolute; top: -2px; left: 6px; width: 12px; height: 34px;
+  background: var(--bone); border-radius: 0 0 8px 8px;
+}
+.candle .wick { position: absolute; bottom: 118px; left: 21px; width: 2px; height: 12px; background: #2a1a10; }
+.flame {
+  position: absolute; bottom: 126px; left: 50%; width: 22px; height: 40px;
+  transform: translateX(-50%) scale(.25); transform-origin: 50% 100%;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(ellipse at 50% 75%, #fff6d8 0 18%, var(--wax) 45%, rgba(214,90,30,.85) 70%, transparent 74%);
+  opacity: .35;
+  transition: transform .6s cubic-bezier(.2,1.6,.4,1), opacity .4s;
+}
+.flame::after {
+  content: ""; position: absolute; inset: -70px -60px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,181,68,.35), transparent 65%);
+  opacity: 0; transition: opacity .8s;
+}
+.gate.lit .flame { transform: translateX(-50%) scale(1); opacity: 1; animation: flicker 1.6s ease-in-out infinite .6s; }
+.gate.lit .flame::after { opacity: 1; }
+@keyframes flicker {
+  0%,100% { transform: translateX(-50%) scale(1, 1) rotate(-1deg); }
+  30% { transform: translateX(-52%) scale(.94, 1.06) rotate(2deg); }
+  55% { transform: translateX(-48%) scale(1.03, .95) rotate(-2deg); }
+  80% { transform: translateX(-50%) scale(.97, 1.04) rotate(1deg); }
+}
+.gate-text { font-family: var(--display); font-size: 34px; line-height: 1.1; letter-spacing: .01em; }
+.gate-hint { font-style: italic; color: var(--ash); font-size: 16px; margin-top: -16px; }
+.gate:focus-visible { outline: none; }
+.gate:focus-visible .gate-text { outline: 2px solid var(--wax); outline-offset: 8px; }
+
+/* ---------- La tabla ---------- */
+main { position: relative; z-index: 1; }
+.stage {
+  min-height: 100dvh;
+  display: grid; align-content: center; justify-items: center;
+  padding: 28px 12px 40px; gap: 22px;
+}
+.board-wrap { width: min(96vw, 760px); perspective: 1100px; }
+.board {
+  position: relative; width: 100%; aspect-ratio: 3 / 2;
+  border-radius: 18px;
+  background:
+    repeating-linear-gradient(176deg, rgba(0,0,0,.06) 0 2px, transparent 2px 9px),
+    radial-gradient(120% 90% at 50% 35%, var(--board-hi), var(--board-lo) 80%);
+  box-shadow: 0 30px 60px -20px #000, inset 0 0 0 1px rgba(234,219,184,.18), inset 0 0 60px rgba(0,0,0,.55);
+  transform: rotateX(14deg);
+  transform-origin: 50% 80%;
+  container-type: inline-size;
+  user-select: none; -webkit-user-select: none;
+}
+.board::before { /* filete doble */
+  content: ""; position: absolute; inset: 2.2%; border-radius: 12px;
+  border: 1px solid rgba(234,219,184,.32);
+  box-shadow: 0 0 0 4px transparent, 0 0 0 5px rgba(234,219,184,.14);
+  pointer-events: none;
+}
+.glyph {
+  position: absolute; transform: translate(-50%, -50%) rotate(var(--r, 0deg));
+  font-family: var(--display); color: var(--bone);
+  font-size: 7cqi; line-height: 1;
+  text-shadow: 0 1px 0 rgba(0,0,0,.6);
+  transition: color .3s, text-shadow .3s;
+}
+.glyph.num { font-size: 5.6cqi; }
+.glyph.word { font-size: 5cqi; letter-spacing: .04em; }
+.glyph.lit { color: #fff3d0; text-shadow: 0 0 2cqi rgba(244,181,68,.9), 0 0 5cqi rgba(244,181,68,.5); }
+.glyph.was { color: #f1dfb4; }
+.moon { position: absolute; left: 50%; top: 13%; transform: translate(-50%,-50%); width: 6cqi; height: 6cqi; }
+
+.planchette {
+  position: absolute; width: 22%; left: 39%; top: 40%;
+  transform: rotate(var(--tilt, 0deg));
+  transition: left .7s cubic-bezier(.45,.05,.3,1), top .7s cubic-bezier(.45,.05,.3,1), transform .7s ease;
+  filter: drop-shadow(0 2cqi 1.6cqi rgba(0,0,0,.6));
+  pointer-events: none; z-index: 2;
+}
+.planchette svg { display: block; width: 100%; height: auto; }
+
+.message {
+  min-height: 1.3em;
+  font-family: var(--display); font-size: clamp(30px, 8vw, 52px);
+  letter-spacing: .18em; text-align: center; color: var(--bone);
+  text-shadow: 0 0 18px rgba(244,181,68,.35);
+}
+.message span { display: inline-block; animation: ink .5s ease-out both; }
+.message .gap { width: .5em; }
+@keyframes ink { from { opacity: 0; filter: blur(6px); transform: translateY(6px); } to { opacity: 1; filter: none; transform: none; } }
+
+.omen { margin: 0; font-style: italic; font-size: 21px; color: var(--ash); text-align: center; }
+.skip {
+  background: none; border: 0; color: var(--ash); font: italic 16px var(--body);
+  text-decoration: underline; text-underline-offset: 4px; cursor: pointer; padding: 8px;
+}
+.skip[hidden] { display: none; }
+
+/* ---------- Los detalles ---------- */
+.details {
+  max-width: 34rem; margin: 0 auto; padding: 24px 20px 72px;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.details.shown { opacity: 1; transform: none; }
+.details[hidden] { display: none; }
+.details h1 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(52px, 15vw, 96px); line-height: .92; margin: 0 0 14px;
+  text-align: center; letter-spacing: -.005em;
+}
+.lede { font-style: italic; text-align: center; font-size: 22px; margin: 0 0 36px; color: var(--bone); }
+
+.facts { margin: 0; display: grid; grid-template-columns: max-content 1fr; column-gap: 20px; row-gap: 16px; }
+.facts dt { font-family: var(--display); font-size: 24px; line-height: 1.2; color: var(--wax); }
+.facts dd { margin: 0; padding-top: 2px; }
+.facts a { color: var(--bone); text-decoration-color: var(--bone-dim); text-underline-offset: 3px; }
+
+.countdown {
+  margin: 40px 0 34px; text-align: center; font-style: italic; color: var(--ash);
+}
+.countdown strong { display: block; font: 400 clamp(34px, 9vw, 48px)/1.1 var(--display); color: var(--bone); font-style: normal; margin-top: 4px; }
+
+.actions { display: grid; gap: 12px; }
+.btn {
+  display: block; text-align: center; text-decoration: none;
+  padding: 15px 18px; border-radius: 4px; font: 20px var(--body);
+  border: 1px solid var(--bone); color: var(--bone); background: transparent;
+}
+.btn.primary { background: var(--bone); color: var(--night); }
+.btn:focus-visible, .skip:focus-visible, .sound:focus-visible, .again:focus-visible { outline: 2px solid var(--wax); outline-offset: 3px; }
+.again {
+  display: block; margin: 30px auto 0; background: none; border: 0; cursor: pointer;
+  color: var(--ash); font: italic 17px var(--body); text-decoration: underline; text-underline-offset: 4px;
+}
+
+.sound {
+  position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 10;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(234,219,184,.35); background: rgba(30,6,9,.7); color: var(--bone);
+  display: grid; place-items: center; cursor: pointer;
+}
+.sound[hidden] { display: none; }
+.sound svg { width: 20px; height: 20px; }
+
+@media (min-width: 700px) {
+  .stage { gap: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow, .grain, .gate.lit .flame { animation: none; }
+  .planchette { transition: none; }
+}
+</style>
+</head>
+<body class="locked">
+<div class="glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<button class="gate" id="gate" type="button" aria-label="Encender la vela y abrir la invitación">
+  <span class="gate-inner">
+    <span class="candle" aria-hidden="true"><span class="flame"></span><span class="wick"></span><span class="stick"></span></span>
+    <span class="gate-text">Toca la vela</span>
+    <span class="gate-hint">Sube el volumen</span>
+  </span>
+</button>
+
+<main>
+  <section class="stage" aria-label="Tabla ouija">
+    <p class="omen">Los espíritus tienen algo que decirte</p>
+    <div class="board-wrap">
+      <div class="board" id="board" aria-hidden="true">
+        <svg class="moon" viewBox="0 0 24 24"><path d="M15 3a9 9 0 1 0 6 15.7A8 8 0 0 1 15 3z" fill="#EADBB8" opacity=".85"/></svg>
+        <div class="planchette" id="planchette">
+          <svg viewBox="0 0 100 120">
+            <defs>
+              <radialGradient id="pg" cx="50%" cy="35%" r="70%">
+                <stop offset="0" stop-color="#F3E7C9"/><stop offset="1" stop-color="#C9B387"/>
+              </radialGradient>
+              <mask id="hole"><rect width="100" height="120" fill="#fff"/><circle cx="50" cy="42" r="15" fill="#000"/></mask>
+            </defs>
+            <path d="M50 4 C76 4 96 34 94 62 C92 92 74 116 50 116 C26 116 8 92 6 62 C4 34 24 4 50 4Z" fill="url(#pg)" mask="url(#hole)"/>
+            <circle cx="50" cy="42" r="15" fill="none" stroke="#5A1A1F" stroke-width="2.5"/>
+            <circle cx="50" cy="42" r="15" fill="rgba(255,240,200,.12)"/>
+            <path d="M50 70 l4 9 l-4 9 l-4 -9z" fill="#5A1A1F" opacity=".7"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <p class="message" id="message" aria-live="polite"></p>
+    <button class="skip" id="skip" type="button" hidden>Saltar al mensaje</button>
+  </section>
+
+  <section class="details" id="details" hidden>
+    <h1 id="title">Noche de brujas</h1>
+    <p class="lede" id="lede">Valeria te invoca a su fiesta de Halloween.</p>
+
+    <dl class="facts">
+      <dt>Cuándo</dt><dd id="when"></dd>
+      <dt>Dónde</dt><dd id="where"></dd>
+      <dt>Disfraz</dt><dd id="dress"></dd>
+      <dt>Trae</dt><dd id="bring"></dd>
+    </dl>
+
+    <p class="countdown" id="countdown"></p>
+
+    <div class="actions">
+      <a class="btn primary" id="rsvp" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
+      <a class="btn" id="cal" target="_blank" rel="noopener">Agregar a mi calendario</a>
+      <a class="btn" id="map" target="_blank" rel="noopener">Ver ubicación</a>
+    </div>
+
+    <button class="again" id="again" type="button">Invocar otra vez</button>
+  </section>
+</main>
+
+<button class="sound" id="sound" type="button" aria-label="Silenciar" hidden></button>
+
+<script>
+/* =========================================================
+   EDITA AQUÍ los datos de la fiesta
+   ========================================================= */
+const CONFIG = {
+  titulo: "Noche de brujas",
+  anfitriona: "Valeria",
+  inicio: "2026-10-31T21:00:00-06:00",   // fecha y hora (CDMX)
+  fin:    "2026-11-01T03:00:00-06:00",
+  cuandoTexto: "Sábado 31 de octubre, 9:00 pm",
+  lugarTexto: "Dirección por confirmar",
+  lugarMaps: "Ciudad de México",          // lo que se busca en Google Maps
+  disfraz: "Obligatorio. Sin disfraz no hay entrada.",
+  trae: "Algo de tomar y tu mejor susto.",
+  whatsapp: "5215500000000",              // tu número con 521 + 10 dígitos, sin espacios
+  // lo que deletrea la planchette (solo letras A–Z y números)
+  mensaje: ["VEN", "31", "OCT"]
+};
+/* ========================================================= */
+
+const $ = (id) => document.getElementById(id);
+const board = $("board"), planchette = $("planchette"), message = $("message");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- llenar detalles ---------- */
+$("title").textContent = CONFIG.titulo;
+$("lede").textContent = `${CONFIG.anfitriona} te invoca a su fiesta de Halloween.`;
+$("when").textContent = CONFIG.cuandoTexto;
+const mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.lugarMaps);
+$("where").innerHTML = "";
+const a = document.createElement("a"); a.href = mapsUrl; a.target = "_blank"; a.rel = "noopener"; a.textContent = CONFIG.lugarTexto;
+$("where").append(a);
+$("dress").textContent = CONFIG.disfraz;
+$("bring").textContent = CONFIG.trae;
+$("map").href = mapsUrl;
+$("rsvp").href = `https://wa.me/${CONFIG.whatsapp}?text=` + encodeURIComponent(`¡Ahí estaré en tu fiesta de Halloween! 🎃`);
+const gcal = (d) => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, "");
+$("cal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+  + "&text=" + encodeURIComponent(`${CONFIG.titulo} · Halloween con ${CONFIG.anfitriona}`)
+  + "&dates=" + gcal(CONFIG.inicio) + "/" + gcal(CONFIG.fin)
+  + "&location=" + encodeURIComponent(CONFIG.lugarTexto)
+  + "&details=" + encodeURIComponent("Disfraz: " + CONFIG.disfraz);
+
+function tick() {
+  const ms = new Date(CONFIG.inicio) - Date.now();
+  const el = $("countdown");
+  if (ms <= 0 && ms > -6 * 3600e3) { el.innerHTML = "La invocación ya empezó<strong>Te esperamos</strong>"; return; }
+  if (ms <= 0) { el.innerHTML = "Los espíritus ya se fueron<strong>Hasta el próximo año</strong>"; return; }
+  const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+  const parts = d > 0 ? `${d} ${d === 1 ? "día" : "días"}, ${h} h` : `${h} h ${m} min`;
+  el.innerHTML = `Faltan<strong>${parts}</strong>`;
+}
+tick(); setInterval(tick, 30000);
+
+/* ---------- construir la tabla ---------- */
+const ASPECT = 2 / 3; // alto / ancho
+const pos = {};
+function place(key, x, y, r = 0, cls = "") {
+  const s = document.createElement("span");
+  s.className = "glyph " + cls; s.textContent = key;
+  s.style.left = x + "%"; s.style.top = y + "%"; s.style.setProperty("--r", r + "deg");
+  board.append(s); pos[key] = { x, y, el: s };
+}
+function arc(letters, x0, x1, base, lift) {
+  const n = letters.length;
+  letters.split("").forEach((ch, i) => {
+    const t = i / (n - 1);
+    const x = x0 + (x1 - x0) * t;
+    const y = base - lift * Math.sin(Math.PI * t);
+    const ang = Math.atan2(-lift * Math.PI * Math.cos(Math.PI * t) * ASPECT, (x1 - x0)) * 180 / Math.PI;
+    place(ch, x, y, ang);
+  });
+}
+place("SÍ", 13, 13, 0, "word");
+place("NO", 87, 13, 0, "word");
+arc("ABCDEFGHIJKLM", 9, 91, 47, 17);
+arc("NOPQRSTUVWXYZ", 11, 89, 67, 15);
+"1234567890".split("").forEach((n, i) => place(n, 24 + i * (52 / 9), 81, 0, "num"));
+place("ADIÓS", 50, 92, 0, "word");
+// "NO" y "N" comparten tecla en pos: la letra N quedó registrada antes, guardamos aparte
+const letterPos = {};
+board.querySelectorAll(".glyph").forEach((el) => {
+  const k = el.textContent;
+  if (!el.classList.contains("word")) letterPos[k] = { x: parseFloat(el.style.left), y: parseFloat(el.style.top), el };
+});
+
+function moveTo(x, y) {
+  // la ventana de la planchette está en (50%, 35%) de su caja; caja = 22% ancho × 39.6% alto
+  planchette.style.left = (x - 11) + "%";
+  planchette.style.top = (y - 13.86) + "%";
+  planchette.style.setProperty("--tilt", (Math.random() * 16 - 8).toFixed(1) + "deg");
+}
+moveTo(50, 53);
+
+/* ---------- sonido (sin archivos) ---------- */
+let ctx, master, muted = false;
+function startAudio() {
+  try {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    master.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 3);
+    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 320; lp.Q.value = 6; lp.connect(master);
+    const drone = ctx.createGain(); drone.gain.value = 0.09; drone.connect(lp);
+    [55, 55.6, 82.4].forEach((f) => { const o = ctx.createOscillator(); o.type = "sawtooth"; o.frequency.value = f; o.connect(drone); o.start(); });
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.08;
+    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = 180; lfo.connect(lfoAmt); lfoAmt.connect(lp.frequency); lfo.start();
+    $("sound").hidden = false; renderSound();
+  } catch (e) { /* sin sonido, no pasa nada */ }
+}
+function knock() {
+  if (!ctx || muted) return;
+  const t = ctx.currentTime;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(190, t); o.frequency.exponentialRampToValueAtTime(70, t + .18);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + .01); g.gain.exponentialRampToValueAtTime(0.0001, t + .35);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + .4);
+}
+function renderSound() {
+  $("sound").setAttribute("aria-label", muted ? "Activar sonido" : "Silenciar");
+  $("sound").innerHTML = muted
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
+}
+$("sound").addEventListener("click", () => {
+  muted = !muted; renderSound();
+  if (ctx) master.gain.setTargetAtTime(muted ? 0 : 0.5, ctx.currentTime, .2);
+});
+
+/* ---------- la sesión ---------- */
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+let run = 0;
+
+async function spell() {
+  const id = ++run;
+  message.innerHTML = "";
+  board.querySelectorAll(".glyph").forEach((g) => g.classList.remove("lit", "was"));
+  $("skip").hidden = false;
+  moveTo(50, 53);
+  await wait(900);
+  for (let w = 0; w < CONFIG.mensaje.length; w++) {
+    if (w > 0) {
+      const gap = document.createElement("span"); gap.className = "gap"; message.append(gap);
+      moveTo(50, 55); await wait(800); if (id !== run) return;
+    }
+    for (const ch of CONFIG.mensaje[w].toUpperCase()) {
+      const p = letterPos[ch]; if (!p) continue;
+      moveTo(p.x, p.y);
+      await wait(720); if (id !== run) return;
+      p.el.classList.add("lit"); knock();
+      const s = document.createElement("span"); s.textContent = ch; message.append(s);
+      await wait(520); if (id !== run) return;
+      p.el.classList.remove("lit"); p.el.classList.add("was");
+    }
+  }
+  moveTo(50, 53);
+  await wait(700); if (id !== run) return;
+  reveal(true);
+}
+
+function showWhole() {
+  message.innerHTML = "";
+  CONFIG.mensaje.forEach((w, i) => {
+    if (i) { const g = document.createElement("span"); g.className = "gap"; message.append(g); }
+    [...w].forEach((ch) => { const s = document.createElement("span"); s.textContent = ch; message.append(s); });
+  });
+}
+
+function reveal(scroll) {
+  $("skip").hidden = true;
+  const d = $("details");
+  d.hidden = false;
+  requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("shown")));
+  if (scroll) setTimeout(() => d.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }), 500);
+}
+
+$("skip").addEventListener("click", () => { run++; showWhole(); moveTo(50, 53); reveal(true); });
+$("again").addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  setTimeout(spell, reduce ? 0 : 700);
+});
+
+$("gate").addEventListener("click", () => {
+  const g = $("gate");
+  if (g.classList.contains("lit")) return;
+  g.classList.add("lit");
+  startAudio();
+  setTimeout(() => {
+    g.classList.add("gone");
+    document.body.classList.remove("locked");
+    if (reduce) { showWhole(); reveal(false); } else spell();
+  }, reduce ? 200 : 1300);
+});
+</script>
+</body>
+</html>
