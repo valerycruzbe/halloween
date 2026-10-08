@@ -198,29 +198,60 @@ float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
   return mix(mix(h1(i),h1(i+vec2(1,0)),f.x), mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),f.x), f.y); }
 float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<4;i++){ v+=a*noise(p); p=p*2.02+vec2(3.1,1.7); a*=.5; } return v; }
 float smin(float a, float b, float k){ float h=clamp(.5+.5*(b-a)/k,0.,1.); return mix(b,a,h)-k*h*(1.-h); }
-float map(vec3 p){
+float smax(float a, float b, float k){ return -smin(-a, -b, k); }
+float ell(vec3 p, vec3 r){ float k0 = length(p/r), k1 = length(p/(r*r)); return k0*(k0-1.)/k1; }
+float capR(vec3 p, vec3 a, vec3 b, float r1, float r2){
+  vec3 pa = p-a, ba = b-a; float h = clamp(dot(pa,ba)/dot(ba,ba), 0., 1.);
+  return length(pa - ba*h) - mix(r1, r2, h);
+}
+// el ídolo: cráneo de toro
+float skull(vec3 p){
+  p /= .86;
+  vec3 q = p; q.x = abs(q.x);
+  float d = ell(p - vec3(0., .3, 0.), vec3(.55, .48, .46));
+  d = smin(d, capR(p, vec3(0., .1, .08), vec3(0., -1.0, .26), .4, .16), .28);
+  float h = capR(q, vec3(.33, .44, 0.), vec3(1.05, .36, .06), .18, .125);
+  h = min(h, capR(q, vec3(1.05, .36, .06), vec3(1.48, .64, .1), .125, .085));
+  h = min(h, capR(q, vec3(1.48, .64, .1), vec3(1.52, 1.12, .02), .085, .02));
+  d = smin(d, h, .13);
+  d = smax(d, -(length(q - vec3(.27, .12, .42)) - .15), .07);        // cuencas
+  d = smax(d, -(ell(q - vec3(.07, -.88, .38), vec3(.05, .1, .08))), .03); // fosas nasales
+  d = smax(d, -(ell(p - vec3(0., .78, -.05), vec3(.25, .06, .4))), .08);  // cresta
+  return d * .86;
+}
+// el metal líquido antes de tomar forma
+float blob(vec3 p){
   float t = T * .32;
   vec3 a = vec3(sin(t)*.95, cos(t*1.3)*.55, cos(t*.8)*.65);
   vec3 b = vec3(cos(t*.7+2.)*.85, sin(t*.9+1.)*.75, sin(t*1.1)*.55);
   vec3 c = vec3(sin(t*1.2+4.)*.65, cos(t*.6+3.)*.95, cos(t*.5+1.)*.75);
-  float d = length(p) - .9 - K * .07;
+  float d = length(p) - .9;
   d = smin(d, length(p-a) - .52, .6);
   d = smin(d, length(p-b) - .44, .55);
-  d = smin(d, length(p-c) - .36, .5);
-  d += .05 * sin(3.6*p.x + T*1.1) * sin(3.6*p.y - T*.9) * sin(3.6*p.z + T*.7) * (1. + K * 1.6);
-  return d;
+  return smin(d, length(p-c) - .36, .5);
+}
+float M; // 0 = líquido, 1 = cráneo
+float map(vec3 p){
+  float d = mix(blob(p), skull(p), M);
+  d += .05 * (1. - .85*M) * sin(3.6*p.x + T*1.1) * sin(3.6*p.y - T*.9) * sin(3.6*p.z + T*.7) * (1. + K * 1.6);
+  return d - K * .015;
 }
 vec3 nrm(vec3 p){ vec2 e = vec2(.0025, -.0025);
   return normalize(e.xyy*map(p+e.xyy) + e.yyx*map(p+e.yyx) + e.yxy*map(p+e.yxy) + e.xxx*map(p+e.xxx)); }
-float env(vec3 d){ // estudio: tiras de luz que giran
-  float s = .1 + .32 * smoothstep(-.3, 1., d.y);
-  s += smoothstep(.93, 1., dot(d, normalize(vec3(-.6, .7, .35)))) * 2.2;
-  s += smoothstep(.975, 1., dot(d, normalize(vec3(.75, .35, -.5)))) * 1.3;
-  s += exp(-pow((d.y - .32) / .035, 2.)) * .8;
+float env(vec3 d){
+  float s = .08 + .26 * smoothstep(-.3, 1., d.y);
+  s += smoothstep(.93, 1., dot(d, normalize(vec3(-.6, .7, .35)))) * 2.;
+  s += smoothstep(.975, 1., dot(d, normalize(vec3(.75, .35, -.5)))) * 1.2;
+  s += exp(-pow((d.y - .32) / .035, 2.)) * .7;
   float r = d.x * sin(T*.33) + d.z * cos(T*.33);
-  s += exp(-pow(r / .025, 2.)) * smoothstep(-.3, .7, d.y) * .9;
+  s += exp(-pow(r / .025, 2.)) * smoothstep(-.3, .7, d.y) * .8;
   return s;
 }
+vec3 flame(int i){
+  float a = float(i) * 0.8976 + T * .12;
+  return vec3(cos(a) * 2.25, -1.32 + .05 * sin(T * 1.7 + float(i) * 2.), sin(a) * 2.25);
+}
+float flick(int i){ float f = float(i); return .75 + .25 * sin(T * 9.1 + f * 3.) * sin(T * 5.3 + f * 1.7); }
 float beam(vec2 p, vec2 o, float ang, float w){
   vec2 d = vec2(sin(ang), -cos(ang)); vec2 v = p - o; float al = dot(v, d); if (al < 0.) return 0.;
   float ac = abs(v.x * d.y - v.y * d.x);
@@ -228,35 +259,53 @@ float beam(vec2 p, vec2 o, float ang, float w){
 }
 void main(){
   vec2 uv = gl_FragCoord.xy / R; float asp = R.x / R.y;
+  float cyc = mod(T, 28.);
+  M = smoothstep(2.5, 8., cyc) * (1. - smoothstep(22., 26.5, cyc));
   vec2 p2 = vec2((uv.x - .5) * asp, uv.y);
-  // fondo: humo y haces
   float haze = smoothstep(.2, 1., fbm(p2 * 1.3 + vec2(T*.025, T*.012)) * .8 + fbm(p2 * 3. - vec2(T*.04, -T*.02)) * .45);
   float bm = beam(p2, vec2(-.6*asp, 1.08), .55 + sin(T*.31)*.35, .012) + beam(p2, vec2(.6*asp, 1.08), -.55 + sin(T*.27+2.)*.35, .012);
-  vec3 bg = vec3(.86,.89,.93) * bm * (.2 + .8*haze) * (.5 + .7*K) + vec3(.03) * haze;
-  // cámara orbitando la escultura
+  vec3 bg = vec3(.86,.89,.93) * bm * (.2 + .8*haze) * (.45 + .6*K) * .8 + vec3(.028) * haze;
+  // cámara: se balancea frente al ídolo
   vec2 q = (gl_FragCoord.xy - .5 * R) / min(R.x, R.y);
-  float rad = 4.3 + (1. - min(asp, 1.)) * .8;
-  vec3 ro = vec3(sin(T*.11) * rad, .35 + sin(T*.17) * .35, cos(T*.11) * rad);
-  vec3 cw = normalize(-ro), cu = normalize(cross(cw, vec3(0,1,0))), cv = cross(cu, cw);
-  float foc = 1.75;
-  vec3 rd = normalize(q.x * cu + q.y * cv + foc * cw);
+  float rad = 4.7 + (1. - min(asp, 1.)) * 1.3;
+  float ang = sin(T * .09) * 1.0;
+  vec3 ro = vec3(sin(ang) * rad, .25 + sin(T*.13) * .3, cos(ang) * rad);
+  vec3 cw = normalize(vec3(0., .05, 0.) - ro), cu = normalize(cross(cw, vec3(0,1,0))), cv = cross(cu, cw);
+  vec3 rd = normalize(q.x * cu + q.y * cv + 1.75 * cw);
   float t = 0., d = 1.; bool hit = false;
-  for (int i = 0; i < 70; i++) {
+  for (int i = 0; i < 72; i++) {
     d = map(ro + rd * t);
     if (d < .002) { hit = true; break; }
-    t += d * .9; if (t > 12.) break;
+    t += d * .85; if (t > 12.) break;
   }
+  vec3 warm = vec3(1., .62, .26);
   vec3 col = bg;
   if (hit) {
     vec3 pos = ro + rd * t, n = nrm(pos), rf = reflect(rd, n);
     float fr = pow(1. + dot(rd, n), 4.);
     vec3 chrome = vec3(.86, .9, .95) * env(rf);
-    chrome *= 1. + .06 * vec3(sin(fr*7. + 1.), sin(fr*7. + 3.4), sin(fr*7. + 5.));  // irisado leve
-    col = mix(chrome * .85, chrome * 1.25 + .06, fr);
-    col *= .8 + .5 * K;
-    col = mix(col, bg, smoothstep(7., 11., t));
+    chrome *= 1. + .06 * vec3(sin(fr*7. + 1.), sin(fr*7. + 3.4), sin(fr*7. + 5.));
+    vec3 fl = vec3(0.);
+    for (int i = 0; i < 7; i++) {           // las velas reflejadas en el cromo
+      vec3 Lp = flame(i) + vec3(0., .12, 0.), Ld = normalize(Lp - pos);
+      float sp = pow(max(dot(rf, Ld), 0.), 220.) * 3. + pow(max(dot(rf, Ld), 0.), 14.) * .12;
+      fl += warm * sp * flick(i) / (1. + .15 * dot(Lp - pos, Lp - pos));
+    }
+    col = mix(chrome * .8, chrome * 1.2 + .05, fr) + fl * (1. + fr);
+    col *= .82 + .45 * K;
+    col = mix(col, bg, smoothstep(8., 12., t));
   }
-  // muro LED
+  // halos de las velas (ocultos detrás del ídolo)
+  for (int i = 0; i < 7; i++) {
+    vec3 f = flame(i);
+    float tc = dot(f - ro, rd);
+    if (tc > 0. && (!hit || tc < t)) {
+      vec3 cp = ro + rd * tc - f;
+      float core = .0014 / (dot(cp.xz, cp.xz) + pow(max(cp.y, 0.) * .45 + max(-cp.y, 0.) * 1.6, 2.) + .00005);
+      float halo = .035 / (dot(cp, cp) + .04);
+      col += warm * (min(core, 6.) * vec3(1., .9, .75) + halo) * flick(i) * .55;
+    }
+  }
   vec2 g = fract(gl_FragCoord.xy / 3.) - .5;
   col *= .78 + .22 * smoothstep(.55, .15, length(g));
   vec2 vq = (uv - .5) * vec2(asp, 1.);
@@ -381,7 +430,7 @@ $("sound").addEventListener("click", () => {
 });
 
 /* ---------- loop visual ---------- */
-let light = 0, t0 = performance.now();
+let light = 0, t0 = performance.now(), tIn = 0;
 const rootStyle = document.documentElement.style;
 function frame(now) {
   const t = (now - t0) / 1000;
@@ -392,7 +441,7 @@ function frame(now) {
   rootStyle.setProperty("--k", k.toFixed(3));
   if (gl) {
     gl.uniform2f(U.R, canvas.width, canvas.height);
-    gl.uniform1f(U.T, reduce ? 3 : t); gl.uniform1f(U.K, k); gl.uniform1f(U.L, light);
+    gl.uniform1f(U.T, reduce ? 12 : t - tIn); gl.uniform1f(U.K, k); gl.uniform1f(U.L, light);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
   requestAnimationFrame(frame);
@@ -414,6 +463,7 @@ $("gate").addEventListener("click", () => {
   else startAudio();
   $("gate").classList.add("gone");
   document.body.classList.add("in");
+  tIn = (performance.now() - t0) / 1000;
 });
 
 /* =========================================================
