@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>23.10 · cabaret negro</title>
+<title>23.10</title>
 <meta name="description" content="Viernes 23.10. Despega el sticker.">
 <meta name="theme-color" content="#000000">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="23.10">
-<meta property="og:description" content="cabaret negro. Despega el sticker.">
+<meta property="og:description" content="Despega el sticker.">
 <meta property="og:url" content="https://valerycruzbe.github.io/halloween/club/">
 <meta property="og:image" content="https://valerycruzbe.github.io/halloween/club/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -115,6 +115,9 @@ body.in .scene { opacity: 1; }
 .flapwrap { position: absolute; inset: 0; pointer-events: none; filter: drop-shadow(-6px -6px 10px rgba(0,0,0,.55)); z-index: 4; }
 .flap { position: absolute; inset: 0; background: linear-gradient(var(--fa, 135deg), #5d5e5c 0%, #a9aaa6 22%, #c8c9c5 48%, #8d8e8a 100%); clip-path: polygon(0 0, 0 0, 0 0); }
 
+.slot { transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+.slot.closed { opacity: 0; transform: scale(.94) translateY(12px); pointer-events: none; }
+.under.open { cursor: pointer; }
 .hint { margin: 0; font-size: 13px; color: var(--mute); position: relative; z-index: 2; transition: opacity .6s; }
 .hint.off { opacity: 0; }
 
@@ -137,12 +140,10 @@ body.in .scene { opacity: 1; }
 <body>
 <canvas id="fog" aria-hidden="true"></canvas>
 
-<p class="date" aria-hidden="true">23.10</p>
 
 <main class="scene">
-  <p class="tag">cabaret negro</p>
   <div class="slot">
-    <section class="under" aria-label="Datos de la fiesta">
+    <section class="under" id="under" aria-label="Datos de la fiesta">
       <p class="num">23.10</p>
       <p class="what">viernes</p>
       <span class="stamp" aria-hidden="true"></span>
@@ -159,7 +160,6 @@ body.in .scene { opacity: 1; }
       <div class="flapwrap"><div class="flap" id="flap"></div></div>
     </div>
   </div>
-  <p class="hint" id="hint">jala desde la esquina</p>
 </main>
 
 <button class="gate" id="gate" type="button">
@@ -176,7 +176,9 @@ const CONFIG = {
   hora: "9 pm until ????",
   maps: "https://maps.app.goo.gl/fkLqFasmJuMbtfCW7",
   pinterest: "https://pin.it/2v7jY3pK0",
-  bpm: 130
+  bpm: 128,
+  // link oficial de la canción en SoundCloud (vacío = techno generado en vivo)
+  soundcloud: ""
 };
 /* ========================================================= */
 const $ = (id) => document.getElementById(id);
@@ -196,32 +198,73 @@ uniform vec2 R; uniform float T, K, L;
 float h1(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
   return mix(mix(h1(i),h1(i+vec2(1,0)),f.x), mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),f.x), f.y); }
-float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.02+vec2(3.1,1.7); a*=.5; } return v; }
+float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<4;i++){ v+=a*noise(p); p=p*2.02+vec2(3.1,1.7); a*=.5; } return v; }
+float smin(float a, float b, float k){ float h=clamp(.5+.5*(b-a)/k,0.,1.); return mix(b,a,h)-k*h*(1.-h); }
+float map(vec3 p){
+  float t = T * .32;
+  vec3 a = vec3(sin(t)*.95, cos(t*1.3)*.55, cos(t*.8)*.65);
+  vec3 b = vec3(cos(t*.7+2.)*.85, sin(t*.9+1.)*.75, sin(t*1.1)*.55);
+  vec3 c = vec3(sin(t*1.2+4.)*.65, cos(t*.6+3.)*.95, cos(t*.5+1.)*.75);
+  float d = length(p) - .9 - K * .07;
+  d = smin(d, length(p-a) - .52, .6);
+  d = smin(d, length(p-b) - .44, .55);
+  d = smin(d, length(p-c) - .36, .5);
+  d += .05 * sin(3.6*p.x + T*1.1) * sin(3.6*p.y - T*.9) * sin(3.6*p.z + T*.7) * (1. + K * 1.6);
+  return d;
+}
+vec3 nrm(vec3 p){ vec2 e = vec2(.0025, -.0025);
+  return normalize(e.xyy*map(p+e.xyy) + e.yyx*map(p+e.yyx) + e.yxy*map(p+e.yxy) + e.xxx*map(p+e.xxx)); }
+float env(vec3 d){ // estudio: tiras de luz que giran
+  float s = .1 + .32 * smoothstep(-.3, 1., d.y);
+  s += smoothstep(.93, 1., dot(d, normalize(vec3(-.6, .7, .35)))) * 2.2;
+  s += smoothstep(.975, 1., dot(d, normalize(vec3(.75, .35, -.5)))) * 1.3;
+  s += exp(-pow((d.y - .32) / .035, 2.)) * .8;
+  float r = d.x * sin(T*.33) + d.z * cos(T*.33);
+  s += exp(-pow(r / .025, 2.)) * smoothstep(-.3, .7, d.y) * .9;
+  return s;
+}
 float beam(vec2 p, vec2 o, float ang, float w){
-  vec2 d = vec2(sin(ang), -cos(ang));
-  vec2 v = p - o; float along = dot(v, d); if (along < 0.) return 0.;
-  float across = abs(v.x * d.y - v.y * d.x);
-  return exp(-pow(across / (w + along * 0.07), 2.0)) * exp(-along * 0.45);
+  vec2 d = vec2(sin(ang), -cos(ang)); vec2 v = p - o; float al = dot(v, d); if (al < 0.) return 0.;
+  float ac = abs(v.x * d.y - v.y * d.x);
+  return exp(-pow(ac / (w + al * .07), 2.)) * exp(-al * .45);
 }
 void main(){
   vec2 uv = gl_FragCoord.xy / R; float asp = R.x / R.y;
-  vec2 p = vec2((uv.x - .5) * asp, uv.y);
-  float f1 = fbm(p * 1.3 + vec2(T * .025, T * .012));
-  float f2 = fbm(p * 3.1 - vec2(T * .04, -T * .02));
-  float haze = smoothstep(.2, 1.0, f1 * .8 + f2 * .45);
-  float b = 0.;
-  b += beam(p, vec2(-.55 * asp, 1.08), .55 + sin(T * .31) * .35, .012);
-  b += beam(p, vec2( .55 * asp, 1.08), -.55 + sin(T * .27 + 2.) * .35, .012);
-  b += beam(p, vec2(0., 1.12), sin(T * .19 + 1.) * .25, .006) * .8;
-  float pulse = .55 + .75 * K;
-  vec3 cold = vec3(.86, .89, .93);
-  vec3 col = cold * b * (.25 + .9 * haze) * pulse * L;
-  col += vec3(.035) * haze * (.6 + .4 * K) * L;
-  float wall = fbm(p * vec2(9., 14.)) * fbm(p * 2.);       // concreto al fondo
-  col += vec3(.03) * wall * smoothstep(.0, .7, uv.y) * L;
-  vec2 q = (uv - .5) * vec2(asp, 1.);
-  col *= smoothstep(1.3, .2, length(q));
-  col += (h1(gl_FragCoord.xy + fract(T) * 91.) - .5) * .045;
+  vec2 p2 = vec2((uv.x - .5) * asp, uv.y);
+  // fondo: humo y haces
+  float haze = smoothstep(.2, 1., fbm(p2 * 1.3 + vec2(T*.025, T*.012)) * .8 + fbm(p2 * 3. - vec2(T*.04, -T*.02)) * .45);
+  float bm = beam(p2, vec2(-.6*asp, 1.08), .55 + sin(T*.31)*.35, .012) + beam(p2, vec2(.6*asp, 1.08), -.55 + sin(T*.27+2.)*.35, .012);
+  vec3 bg = vec3(.86,.89,.93) * bm * (.2 + .8*haze) * (.5 + .7*K) + vec3(.03) * haze;
+  // cámara orbitando la escultura
+  vec2 q = (gl_FragCoord.xy - .5 * R) / min(R.x, R.y);
+  float rad = 4.3 + (1. - min(asp, 1.)) * .8;
+  vec3 ro = vec3(sin(T*.11) * rad, .35 + sin(T*.17) * .35, cos(T*.11) * rad);
+  vec3 cw = normalize(-ro), cu = normalize(cross(cw, vec3(0,1,0))), cv = cross(cu, cw);
+  float foc = 1.75;
+  vec3 rd = normalize(q.x * cu + q.y * cv + foc * cw);
+  float t = 0., d = 1.; bool hit = false;
+  for (int i = 0; i < 70; i++) {
+    d = map(ro + rd * t);
+    if (d < .002) { hit = true; break; }
+    t += d * .9; if (t > 12.) break;
+  }
+  vec3 col = bg;
+  if (hit) {
+    vec3 pos = ro + rd * t, n = nrm(pos), rf = reflect(rd, n);
+    float fr = pow(1. + dot(rd, n), 4.);
+    vec3 chrome = vec3(.86, .9, .95) * env(rf);
+    chrome *= 1. + .06 * vec3(sin(fr*7. + 1.), sin(fr*7. + 3.4), sin(fr*7. + 5.));  // irisado leve
+    col = mix(chrome * .85, chrome * 1.25 + .06, fr);
+    col *= .8 + .5 * K;
+    col = mix(col, bg, smoothstep(7., 11., t));
+  }
+  // muro LED
+  vec2 g = fract(gl_FragCoord.xy / 3.) - .5;
+  col *= .78 + .22 * smoothstep(.55, .15, length(g));
+  vec2 vq = (uv - .5) * vec2(asp, 1.);
+  col *= smoothstep(1.35, .25, length(vq));
+  col *= L;
+  col += (h1(gl_FragCoord.xy + fract(T) * 91.) - .5) * .04;
   gl_FragColor = vec4(max(col, 0.), 1.);
 }`;
 let U = {};
@@ -236,7 +279,7 @@ if (gl) {
   ["R","T","K","L"].forEach((n) => U[n] = gl.getUniformLocation(pr, n));
 }
 function resize() {
-  const s = Math.min(devicePixelRatio || 1, 1.5) * .6;
+  const s = Math.min(devicePixelRatio || 1, 1.5) * (innerWidth < 760 ? .7 : .55);
   canvas.width = Math.round(innerWidth * s); canvas.height = Math.round(innerHeight * s);
   if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
 }
@@ -266,6 +309,20 @@ function hat(t, open) {
   const g = ctx.createGain(); g.gain.setValueAtTime(open ? .09 : .06, t); g.gain.exponentialRampToValueAtTime(.001, t + (open ? .18 : .04));
   s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + .2);
 }
+let delayIn;
+function roll(t, step) { // bajo rodante entre kicks
+  const o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+  o.type = "sawtooth"; o.frequency.value = 41.2 * (step === 3 ? 1.5 : 1);
+  f.type = "lowpass"; f.Q.value = 8; f.frequency.setValueAtTime(220 + 160 * Math.sin(t * .4) ** 2, t); f.frequency.exponentialRampToValueAtTime(90, t + .1);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.16, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + SPB / 4 * .9);
+  o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t + SPB / 4);
+}
+function tok(t) { // golpe de madera que se repite en el delay
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.frequency.setValueAtTime(820, t); o.frequency.exponentialRampToValueAtTime(520, t + .05);
+  g.gain.setValueAtTime(.07, t); g.gain.exponentialRampToValueAtTime(.0001, t + .08);
+  o.connect(g); g.connect(master); g.connect(delayIn); o.start(t); o.stop(t + .1);
+}
 function stab(t) {
   const g = ctx.createGain(), f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.setValueAtTime(1800, t); f.frequency.exponentialRampToValueAtTime(300, t + .5); f.Q.value = 6;
   g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.07, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + .7);
@@ -278,9 +335,11 @@ function schedule() {
     const t = nextBeat, bar = Math.floor(beatN / 4), inBar = beatN % 4;
     const intro = beatN < 16;                 // primeros 4 compases: solo kick
     kick(t);
+    if (beatN >= 8) [1, 2, 3].forEach((st) => roll(t + st * SPB / 4, st));
+    if (beatN >= 24 && (beatN % 8 === 2 || beatN % 8 === 5)) tok(t + SPB * .75);
     if (!intro) hat(t + SPB / 2, inBar === 3);
     if (!intro && beatN % 2) hat(t + SPB * .75, false);
-    if (bar % 4 === 3 && inBar === 2) stab(t + SPB / 2);
+    if (bar % 8 === 7 && inBar === 2) stab(t + SPB / 2);
     beatN++; nextBeat += SPB;
   }
   setTimeout(schedule, 50);
@@ -297,6 +356,9 @@ function startAudio() {
     conv.buffer = ir; verbIn = ctx.createGain(); verbIn.gain.value = .9;
     const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 900;
     verbIn.connect(conv); conv.connect(lp); lp.connect(master);
+    delayIn = ctx.createGain(); const dl = ctx.createDelay(2), fb = ctx.createGain(), dlp = ctx.createBiquadFilter();
+    dl.delayTime.value = SPB * .75; fb.gain.value = .45; dlp.type = "lowpass"; dlp.frequency.value = 2200;
+    delayIn.connect(dl); dl.connect(dlp); dlp.connect(fb); fb.connect(dl); dlp.connect(master);
     startAt = nextBeat = ctx.currentTime + .1; schedule();
     $("sound").hidden = false; renderSound();
   } catch (e) {}
@@ -314,7 +376,11 @@ function renderSound() {
     ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>'
     : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
 }
-$("sound").addEventListener("click", () => { muted = !muted; renderSound(); if (ctx) master.gain.setTargetAtTime(muted ? 0 : .55, ctx.currentTime, .2); });
+$("sound").addEventListener("click", () => {
+  muted = !muted; renderSound();
+  if (scWidget) { muted ? scWidget.pause() : scWidget.play(); }
+  if (ctx) master.gain.setTargetAtTime(muted ? 0 : .55, ctx.currentTime, .2);
+});
 
 /* ---------- loop visual ---------- */
 let light = 0, t0 = performance.now();
@@ -335,8 +401,19 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 
+let scWidget = null;
+if (CONFIG.soundcloud) {
+  const f = document.createElement("iframe");
+  f.allow = "autoplay"; f.title = "Música";
+  f.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;bottom:0;left:0";
+  f.src = "https://w.soundcloud.com/player/?url=" + encodeURIComponent(CONFIG.soundcloud) + "&auto_play=false&visual=false";
+  document.body.append(f);
+  const api = document.createElement("script"); api.src = "https://w.soundcloud.com/player/api.js";
+  api.onload = () => { scWidget = SC.Widget(f); }; document.head.append(api);
+}
 $("gate").addEventListener("click", () => {
-  startAudio();
+  if (scWidget) { scWidget.play(); startAt = performance.now() / 1000; $("sound").hidden = false; renderSound(); }
+  else startAudio();
   $("gate").classList.add("gone");
   document.body.classList.add("in");
 });
@@ -389,7 +466,7 @@ sticker.addEventListener("pointermove", (e) => {
   P = { x: Math.min(Wd - 2, down.px + (e.clientX - down.x)), y: Math.min(Hd - 2, down.py + (e.clientY - down.y)) };
   applyPeel(P);
   const now = performance.now(); if (now - lastSnd > 45) { peelSound(.05 + Math.random() * .05); lastSnd = now; }
-  $("hint").classList.add("off");
+
 });
 function release() {
   if (!dragging) return; dragging = false;
@@ -411,13 +488,21 @@ function animateTo(target, ms, cb) {
   };
   requestAnimationFrame(step);
 }
+const slot = document.querySelector(".slot");
+$("under").addEventListener("click", (e) => {
+  if (!done || e.target.closest("a")) return;
+  slot.classList.add("closed");
+});
+document.querySelector(".scene").addEventListener("click", (e) => {
+  if (slot.classList.contains("closed") && !e.target.closest(".slot")) slot.classList.remove("closed");
+});
 function finish() {
   if (done) return; done = true; cancelAnimationFrame(idleRaf);
-  $("hint").classList.add("off");
+
   peelSound(.12);
   animateTo({ x: -Wd * .15, y: -Hd * .1 }, reduce ? 10 : 650, () => {
     sticker.classList.add("gone");
-    setTimeout(() => { sticker.style.display = "none"; }, 900);
+    setTimeout(() => { sticker.style.display = "none"; $("under").classList.add("open"); }, 900);
   });
 }
 </script>
