@@ -115,8 +115,6 @@ body.in .scene { opacity: 1; }
 .flapwrap { position: absolute; inset: 0; pointer-events: none; filter: drop-shadow(-6px -6px 10px rgba(0,0,0,.55)); z-index: 4; }
 .flap { position: absolute; inset: 0; background: linear-gradient(var(--fa, 135deg), #5d5e5c 0%, #a9aaa6 22%, #c8c9c5 48%, #8d8e8a 100%); clip-path: polygon(0 0, 0 0, 0 0); }
 
-.slot { transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
-.slot.closed { opacity: 0; transform: scale(.94) translateY(12px); pointer-events: none; }
 .under.open { cursor: pointer; }
 .hint { margin: 0; font-size: 13px; color: var(--mute); position: relative; z-index: 2; transition: opacity .6s; }
 .hint.off { opacity: 0; }
@@ -163,7 +161,7 @@ body.in .scene { opacity: 1; }
 </main>
 
 <button class="gate" id="gate" type="button">
-  <span><span class="door"></span><span class="t">toca para entrar</span><span class="s">con audífonos</span></span>
+  <span><span class="door"></span><span class="t">toca para entrar</span></span>
 </button>
 
 <button class="sound" id="sound" type="button" aria-label="Silenciar" hidden></button>
@@ -488,14 +486,33 @@ function animateTo(target, ms, cb) {
   };
   requestAnimationFrame(step);
 }
-const slot = document.querySelector(".slot");
+// tocar la tarjeta: el sticker regresa y se vuelve a pegar
+let resealing = false;
 $("under").addEventListener("click", (e) => {
-  if (!done || e.target.closest("a")) return;
-  slot.classList.add("closed");
+  if (!done || resealing || e.target.closest("a")) return;
+  resealing = true;
+  $("under").classList.remove("open");
+  P = { x: Wd, y: Hd }; applyPeel(P);           // llega plano
+  sticker.style.display = "";
+  sticker.style.transition = "none";
+  sticker.classList.add("gone");
+  void sticker.offsetWidth;
+  sticker.style.transition = reduce ? "opacity .3s" : "transform .85s cubic-bezier(.15,.75,.25,1), opacity .4s";
+  sticker.classList.remove("gone");
+  setTimeout(() => {
+    slap();
+    sticker.style.transition = "";
+    done = false; resealing = false;
+    idleRaf = requestAnimationFrame(idle);
+  }, reduce ? 300 : 820);
 });
-document.querySelector(".scene").addEventListener("click", (e) => {
-  if (slot.classList.contains("closed") && !e.target.closest(".slot")) slot.classList.remove("closed");
-});
+function slap() { // el sticker pegándose
+  if (!ctx || muted) return;
+  const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuf(.12);
+  const f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 1400;
+  const g = ctx.createGain(); g.gain.setValueAtTime(.22, t); g.gain.exponentialRampToValueAtTime(.0001, t + .1);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t);
+}
 function finish() {
   if (done) return; done = true; cancelAnimationFrame(idleRaf);
 
