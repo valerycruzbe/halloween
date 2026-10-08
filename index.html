@@ -3,293 +3,212 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Valeria te invoca · Halloween</title>
-<meta name="description" content="Fiesta de Halloween. Sábado 31 de octubre, 9:00 pm. Abre la invitación.">
-<meta name="theme-color" content="#1E0609">
+<title>Cabaret Negro · Valeria te convoca</title>
+<meta name="description" content="Sesión privada. Sábado 31 de octubre, 9:00 pm. Todo negro, antifaz o máscara.">
+<meta name="theme-color" content="#000000">
 
 <!-- Vista previa en WhatsApp -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="Valeria te invoca 🕯️">
-<meta property="og:description" content="Halloween, sábado 31 de octubre a las 9 pm. Abre la invitación con sonido.">
+<meta property="og:title" content="Cabaret Negro 🎭">
+<meta property="og:description" content="Valeria te convoca. Sábado 31 de octubre. Todo negro, antifaz o máscara. Abre con sonido.">
 <meta property="og:url" content="https://valerycruzbe.github.io/halloween/">
-<meta property="og:image" content="https://valerycruzbe.github.io/halloween/og.png">
+<meta property="og:image" content="https://valerycruzbe.github.io/halloween/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 
 <style>
-@font-face { font-family: "Pirata One"; src: url("fonts/pirata-one.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Bodoni"; src: url("fonts/bodoni.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Bodoni"; font-style: italic; src: url("fonts/bodoni-italic.woff2") format("woff2"); font-display: swap; }
 @font-face { font-family: "Fell"; src: url("fonts/fell.woff2") format("woff2"); font-display: swap; }
 @font-face { font-family: "Fell"; font-style: italic; src: url("fonts/fell-italic.woff2") format("woff2"); font-display: swap; }
 
 :root {
-  --night: #1E0609;
-  --board-hi: #6E2229;
-  --board-lo: #3A0D11;
-  --bone: #EADBB8;
-  --bone-dim: rgba(234, 219, 184, .55);
-  --wax: #F4B544;
-  --ash: #A8927C;
-  --display: "Pirata One", "UnifrakturMaguntia", Georgia, serif;
-  --body: "Fell", "IM Fell English", Georgia, "Times New Roman", serif;
+  --void: #000000;
+  --gold: #C9A45C;
+  --gold-hi: #F1D9A0;
+  --bone: #E9E1D0;
+  --ash: #8E8577;
+  --wine: #3A0810;
+  --display: "Bodoni", "Bodoni Moda", Didot, "Times New Roman", serif;
+  --body: "Fell", "IM Fell English", Georgia, serif;
 }
-
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; background: var(--void); }
 body {
-  margin: 0;
-  min-height: 100dvh;
-  background: var(--night);
-  color: var(--bone);
-  font-family: var(--body);
-  font-size: 19px;
-  line-height: 1.5;
-  overflow-x: hidden;
+  margin: 0; min-height: 100dvh; background: var(--void); color: var(--bone);
+  font-family: var(--body); font-size: 19px; line-height: 1.55; overflow-x: hidden;
 }
 body.locked { overflow: hidden; }
 
-/* luz de vela que respira sobre todo */
-.glow {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(80% 55% at 50% 30%, rgba(244,181,68,.16), transparent 70%);
-  animation: breathe 3.2s ease-in-out infinite;
+#stage {
+  position: fixed; inset: 0; width: 100vw; height: 100lvh; display: block; z-index: 0;
+  background: radial-gradient(60% 70% at 50% 0%, #2a2117, #000 70%); /* respaldo sin WebGL */
 }
-.grain {
-  position: fixed; inset: -50%; pointer-events: none; z-index: 5; opacity: .09;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  animation: grain .8s steps(4) infinite;
-}
-@keyframes breathe { 0%,100% { opacity: .85 } 37% { opacity: 1 } 52% { opacity: .7 } 70% { opacity: .95 } }
-@keyframes grain { 0% { transform: translate(0,0) } 25% { transform: translate(-3%,2%) } 50% { transform: translate(2%,-3%) } 75% { transform: translate(-1%,3%) } }
 
-/* ---------- Pantalla de inicio: la vela ---------- */
+/* ---------- Entrada ---------- */
 .gate {
-  position: fixed; inset: 0; z-index: 20;
-  display: grid; place-items: center; text-align: center;
-  background: radial-gradient(60% 45% at 50% 45%, #2C0A0E, #0E0204 75%);
-  transition: opacity 1.2s ease, visibility 1.2s;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  border: 0; width: 100%; color: inherit; font: inherit; padding: 0;
+  position: fixed; inset: 0; z-index: 30; background: var(--void);
+  display: grid; place-items: center; text-align: center; padding: 24px;
+  transition: opacity 1.6s ease, visibility 1.6s;
 }
 .gate.gone { opacity: 0; visibility: hidden; }
-.gate-inner { display: grid; justify-items: center; gap: 28px; }
-.candle { position: relative; width: 44px; height: 170px; }
-.candle .stick {
-  position: absolute; bottom: 0; left: 0; width: 44px; height: 120px;
-  background: linear-gradient(90deg, #cdbb94, var(--bone) 40%, #b9a47c);
-  border-radius: 6px 6px 3px 3px;
+.gate p { margin: 0; }
+.gate .warn { font-style: italic; color: var(--ash); font-size: 18px; }
+.gate .who { font-family: var(--display); font-style: italic; font-size: clamp(34px, 9vw, 52px); line-height: 1.1; margin: 10px 0 34px; }
+.enter {
+  font: 20px var(--body); color: var(--gold-hi); background: transparent;
+  border: 1px solid var(--gold); padding: 14px 44px; cursor: pointer; letter-spacing: .04em;
+  transition: background .4s, color .4s;
 }
-.candle .stick::before { /* cera escurrida */
-  content: ""; position: absolute; top: -2px; left: 6px; width: 12px; height: 34px;
-  background: var(--bone); border-radius: 0 0 8px 8px;
-}
-.candle .wick { position: absolute; bottom: 118px; left: 21px; width: 2px; height: 12px; background: #2a1a10; }
-.flame {
-  position: absolute; bottom: 126px; left: 50%; width: 22px; height: 40px;
-  transform: translateX(-50%) scale(.25); transform-origin: 50% 100%;
-  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
-  background: radial-gradient(ellipse at 50% 75%, #fff6d8 0 18%, var(--wax) 45%, rgba(214,90,30,.85) 70%, transparent 74%);
-  opacity: .35;
-  transition: transform .6s cubic-bezier(.2,1.6,.4,1), opacity .4s;
-}
-.flame::after {
-  content: ""; position: absolute; inset: -70px -60px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(244,181,68,.35), transparent 65%);
-  opacity: 0; transition: opacity .8s;
-}
-.gate.lit .flame { transform: translateX(-50%) scale(1); opacity: 1; animation: flicker 1.6s ease-in-out infinite .6s; }
-.gate.lit .flame::after { opacity: 1; }
-@keyframes flicker {
-  0%,100% { transform: translateX(-50%) scale(1, 1) rotate(-1deg); }
-  30% { transform: translateX(-52%) scale(.94, 1.06) rotate(2deg); }
-  55% { transform: translateX(-48%) scale(1.03, .95) rotate(-2deg); }
-  80% { transform: translateX(-50%) scale(.97, 1.04) rotate(1deg); }
-}
-.gate-text { font-family: var(--display); font-size: 34px; line-height: 1.1; letter-spacing: .01em; }
-.gate-hint { font-style: italic; color: var(--ash); font-size: 16px; margin-top: -16px; }
-.gate:focus-visible { outline: none; }
-.gate:focus-visible .gate-text { outline: 2px solid var(--wax); outline-offset: 8px; }
+.enter:hover { background: var(--gold); color: #000; }
+.gate .sound-hint { margin-top: 18px; font-size: 15px; color: var(--ash); }
 
-/* ---------- La tabla ---------- */
-main { position: relative; z-index: 1; }
-.stage {
-  min-height: 100dvh;
-  display: grid; align-content: center; justify-items: center;
-  padding: 28px 12px 40px; gap: 22px;
+/* ---------- Escena ---------- */
+main { position: relative; z-index: 2; }
+.hero {
+  min-height: 100svh; display: grid; place-items: center; text-align: center;
+  padding: 80px max(28px, 12vw) 90px;
 }
-.board-wrap { width: min(96vw, 760px); perspective: 1100px; }
-.board {
-  position: relative; width: 100%; aspect-ratio: 3 / 2;
-  border-radius: 18px;
-  background:
-    repeating-linear-gradient(176deg, rgba(0,0,0,.06) 0 2px, transparent 2px 9px),
-    radial-gradient(120% 90% at 50% 35%, var(--board-hi), var(--board-lo) 80%);
-  box-shadow: 0 30px 60px -20px #000, inset 0 0 0 1px rgba(234,219,184,.18), inset 0 0 60px rgba(0,0,0,.55);
-  transform: rotateX(14deg);
-  transform-origin: 50% 80%;
-  container-type: inline-size;
-  user-select: none; -webkit-user-select: none;
+.hero-inner { opacity: 0; transform: translateY(14px) scale(.985); filter: blur(8px);
+  transition: opacity 2.4s ease, transform 2.4s cubic-bezier(.2,.7,.2,1), filter 2.4s ease; }
+.hero.shown .hero-inner { opacity: 1; transform: none; filter: none; }
+.mask { width: min(52vw, 230px); height: auto; display: block; margin: 0 auto 26px;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,.9)) drop-shadow(0 0 22px rgba(241,217,160,.18)); }
+.kicker { font-style: italic; font-size: 21px; margin: 0; color: var(--bone); }
+.hero h1 {
+  font-family: var(--display); font-style: italic; font-weight: 400;
+  font-size: clamp(58px, 17vw, 132px); line-height: .92; letter-spacing: -.02em;
+  margin: 8px 0 18px; color: var(--gold-hi);
+  background: linear-gradient(176deg, #FFF1CF 0%, #E7C98A 38%, #9C7A3C 62%, #E9CF95 82%, #B8914C 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  text-shadow: none;
 }
-.board::before { /* filete doble */
-  content: ""; position: absolute; inset: 2.2%; border-radius: 12px;
-  border: 1px solid rgba(234,219,184,.32);
-  box-shadow: 0 0 0 4px transparent, 0 0 0 5px rgba(234,219,184,.14);
-  pointer-events: none;
+.sub { margin: 0 auto; max-width: 22em; font-size: 20px; color: var(--bone); }
+.down {
+  position: absolute; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  color: var(--ash); font-style: italic; font-size: 16px; text-decoration: none;
+  display: grid; justify-items: center; gap: 8px; opacity: 0; transition: opacity 2s 1.6s;
 }
-.glyph {
-  position: absolute; transform: translate(-50%, -50%) rotate(var(--r, 0deg));
-  font-family: var(--display); color: var(--bone);
-  font-size: 7cqi; line-height: 1;
-  text-shadow: 0 1px 0 rgba(0,0,0,.6);
-  transition: color .3s, text-shadow .3s;
-}
-.glyph.num { font-size: 5.6cqi; }
-.glyph.word { font-size: 5cqi; letter-spacing: .04em; }
-.glyph.lit { color: #fff3d0; text-shadow: 0 0 2cqi rgba(244,181,68,.9), 0 0 5cqi rgba(244,181,68,.5); }
-.glyph.was { color: #f1dfb4; }
-.moon { position: absolute; left: 50%; top: 13%; transform: translate(-50%,-50%); width: 6cqi; height: 6cqi; }
+.hero.shown .down { opacity: 1; }
+.down i { display: block; width: 1px; height: 34px; background: linear-gradient(var(--gold), transparent); animation: drip 2.4s ease-in-out infinite; transform-origin: top; }
+@keyframes drip { 0% { transform: scaleY(0); opacity: 1 } 70% { transform: scaleY(1); opacity: 1 } 100% { transform: scaleY(1); opacity: 0 } }
 
-.planchette {
-  position: absolute; width: 22%; left: 39%; top: 40%;
-  transform: rotate(var(--tilt, 0deg));
-  transition: left .7s cubic-bezier(.45,.05,.3,1), top .7s cubic-bezier(.45,.05,.3,1), transform .7s ease;
-  filter: drop-shadow(0 2cqi 1.6cqi rgba(0,0,0,.6));
-  pointer-events: none; z-index: 2;
+/* ---------- Reglas ---------- */
+.rules {
+  max-width: 36rem; margin: 0 auto; padding: 40px max(28px, 11vw) 80px;
+  background: radial-gradient(90% 60% at 50% 40%, rgba(0,0,0,.82), rgba(0,0,0,.55) 70%, transparent);
 }
-.planchette svg { display: block; width: 100%; height: auto; }
+.rules h2 {
+  font-family: var(--display); font-weight: 400; font-style: italic; text-align: center;
+  font-size: clamp(34px, 8.6vw, 52px); line-height: 1.05; margin: 0 0 34px; color: var(--bone); text-wrap: balance;
+}
+.facts { margin: 0; }
+.fact { display: grid; grid-template-columns: 6.3em 1fr; gap: 18px; padding: 16px 0; border-top: 1px solid rgba(201,164,92,.28); }
+.fact:last-child { border-bottom: 1px solid rgba(201,164,92,.28); }
+.fact dt { font-family: var(--display); font-style: italic; font-size: 21px; color: var(--gold); line-height: 1.35; }
+.fact dd { margin: 0; }
+.fact dd small { display: block; color: var(--ash); font-size: 16px; font-style: italic; margin-top: 2px; }
+.password { font-family: var(--display); font-size: 26px; letter-spacing: .12em; color: var(--gold-hi); }
+.fact a { color: var(--bone); text-decoration-color: rgba(233,225,208,.45); text-underline-offset: 3px; }
 
-.message {
-  min-height: 1.3em;
-  font-family: var(--display); font-size: clamp(30px, 8vw, 52px);
-  letter-spacing: .18em; text-align: center; color: var(--bone);
-  text-shadow: 0 0 18px rgba(244,181,68,.35);
-}
-.message span { display: inline-block; animation: ink .5s ease-out both; }
-.message .gap { width: .5em; }
-@keyframes ink { from { opacity: 0; filter: blur(6px); transform: translateY(6px); } to { opacity: 1; filter: none; transform: none; } }
+.countdown { text-align: center; margin: 44px 0 36px; font-style: italic; color: var(--ash); }
+.countdown strong { display: block; font: 400 clamp(36px, 10vw, 54px)/1.1 var(--display); color: var(--bone); font-style: normal; font-variant-numeric: lining-nums; margin-top: 4px; }
 
-.omen { margin: 0; font-style: italic; font-size: 21px; color: var(--ash); text-align: center; }
-.skip {
-  background: none; border: 0; color: var(--ash); font: italic 16px var(--body);
-  text-decoration: underline; text-underline-offset: 4px; cursor: pointer; padding: 8px;
+.oath {
+  position: relative; display: block; width: 100%; overflow: hidden;
+  padding: 18px 20px; font: 20px var(--body); color: #000; background: var(--bone);
+  border: 0; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
+  -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
 }
-.skip[hidden] { display: none; }
-
-/* ---------- Los detalles ---------- */
-.details {
-  max-width: 34rem; margin: 0 auto; padding: 24px 20px 72px;
-  opacity: 0; transform: translateY(24px);
-  transition: opacity 1.2s ease, transform 1.2s ease;
+.oath::before {
+  content: ""; position: absolute; inset: 0; transform-origin: left; transform: scaleX(var(--p, 0));
+  background: linear-gradient(90deg, #6B0F1A, #8E1424);
 }
-.details.shown { opacity: 1; transform: none; }
-.details[hidden] { display: none; }
-.details h1 {
-  font-family: var(--display); font-weight: 400;
-  font-size: clamp(52px, 15vw, 96px); line-height: .92; margin: 0 0 14px;
-  text-align: center; letter-spacing: -.005em;
+.oath span { position: relative; transition: color .2s; }
+.oath.holding span, .oath.done span { color: var(--bone); }
+.oath.done::before { transform: scaleX(1); }
+.oath-help { text-align: center; color: var(--ash); font-style: italic; font-size: 15px; margin: 10px 0 22px; }
+.ghost {
+  display: block; text-align: center; text-decoration: none; padding: 15px 18px;
+  border: 1px solid rgba(201,164,92,.6); color: var(--bone); font-size: 19px; margin-top: 10px;
 }
-.lede { font-style: italic; text-align: center; font-size: 22px; margin: 0 0 36px; color: var(--bone); }
-
-.facts { margin: 0; display: grid; grid-template-columns: max-content 1fr; column-gap: 20px; row-gap: 16px; }
-.facts dt { font-family: var(--display); font-size: 24px; line-height: 1.2; color: var(--wax); }
-.facts dd { margin: 0; padding-top: 2px; }
-.facts a { color: var(--bone); text-decoration-color: var(--bone-dim); text-underline-offset: 3px; }
-
-.countdown {
-  margin: 40px 0 34px; text-align: center; font-style: italic; color: var(--ash);
-}
-.countdown strong { display: block; font: 400 clamp(34px, 9vw, 48px)/1.1 var(--display); color: var(--bone); font-style: normal; margin-top: 4px; }
-
-.actions { display: grid; gap: 12px; }
-.btn {
-  display: block; text-align: center; text-decoration: none;
-  padding: 15px 18px; border-radius: 4px; font: 20px var(--body);
-  border: 1px solid var(--bone); color: var(--bone); background: transparent;
-}
-.btn.primary { background: var(--bone); color: var(--night); }
-.btn:focus-visible, .skip:focus-visible, .sound:focus-visible, .again:focus-visible { outline: 2px solid var(--wax); outline-offset: 3px; }
-.again {
-  display: block; margin: 30px auto 0; background: none; border: 0; cursor: pointer;
-  color: var(--ash); font: italic 17px var(--body); text-decoration: underline; text-underline-offset: 4px;
-}
+.oath:focus-visible, .ghost:focus-visible, .enter:focus-visible, .sound:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 3px; }
+.seal { text-align: center; margin: 46px 0 0; color: var(--ash); font-style: italic; font-size: 16px; }
 
 .sound {
   position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 10;
-  width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid rgba(234,219,184,.35); background: rgba(30,6,9,.7); color: var(--bone);
-  display: grid; place-items: center; cursor: pointer;
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(201,164,92,.45);
+  background: rgba(0,0,0,.6); color: var(--gold-hi); display: grid; place-items: center; cursor: pointer;
 }
 .sound[hidden] { display: none; }
 .sound svg { width: 20px; height: 20px; }
 
-@media (min-width: 700px) {
-  .stage { gap: 30px; }
-}
 @media (prefers-reduced-motion: reduce) {
-  .glow, .grain, .gate.lit .flame { animation: none; }
-  .planchette { transition: none; }
+  .hero-inner, .down { transition: opacity .6s; transform: none; filter: none; }
+  .down i { animation: none; }
 }
 </style>
 </head>
 <body class="locked">
-<div class="glow" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
+<canvas id="stage" aria-hidden="true"></canvas>
 
-<button class="gate" id="gate" type="button" aria-label="Encender la vela y abrir la invitación">
-  <span class="gate-inner">
-    <span class="candle" aria-hidden="true"><span class="flame"></span><span class="wick"></span><span class="stick"></span></span>
-    <span class="gate-text">Toca la vela</span>
-    <span class="gate-hint">Sube el volumen</span>
-  </span>
-</button>
+<div class="gate" id="gate">
+  <div>
+    <p class="warn">Esta invitación es personal</p>
+    <p class="who" id="gateWho">Has sido convocada</p>
+    <button class="enter" id="enter" type="button">Entrar</button>
+    <p class="sound-hint">Sube el volumen</p>
+  </div>
+</div>
 
 <main>
-  <section class="stage" aria-label="Tabla ouija">
-    <p class="omen">Los espíritus tienen algo que decirte</p>
-    <div class="board-wrap">
-      <div class="board" id="board" aria-hidden="true">
-        <svg class="moon" viewBox="0 0 24 24"><path d="M15 3a9 9 0 1 0 6 15.7A8 8 0 0 1 15 3z" fill="#EADBB8" opacity=".85"/></svg>
-        <div class="planchette" id="planchette">
-          <svg viewBox="0 0 100 120">
-            <defs>
-              <radialGradient id="pg" cx="50%" cy="35%" r="70%">
-                <stop offset="0" stop-color="#F3E7C9"/><stop offset="1" stop-color="#C9B387"/>
-              </radialGradient>
-              <mask id="hole"><rect width="100" height="120" fill="#fff"/><circle cx="50" cy="42" r="15" fill="#000"/></mask>
-            </defs>
-            <path d="M50 4 C76 4 96 34 94 62 C92 92 74 116 50 116 C26 116 8 92 6 62 C4 34 24 4 50 4Z" fill="url(#pg)" mask="url(#hole)"/>
-            <circle cx="50" cy="42" r="15" fill="none" stroke="#5A1A1F" stroke-width="2.5"/>
-            <circle cx="50" cy="42" r="15" fill="rgba(255,240,200,.12)"/>
-            <path d="M50 70 l4 9 l-4 9 l-4 -9z" fill="#5A1A1F" opacity=".7"/>
-          </svg>
-        </div>
-      </div>
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <svg class="mask" viewBox="0 0 200 84" aria-hidden="true">
+        <defs>
+          <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#7A5A26"/>
+            <stop offset=".35" stop-color="#E9CF95"/>
+            <stop offset=".5" stop-color="#FFF4D6"/>
+            <stop offset=".65" stop-color="#C9A45C"/>
+            <stop offset="1" stop-color="#5E4219"/>
+            <animateTransform attributeName="gradientTransform" type="translate" values="-1 0; 1 0; 1 0" keyTimes="0; .45; 1" dur="6s" repeatCount="indefinite"/>
+          </linearGradient>
+          <linearGradient id="goldBase" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#D9BA7A"/><stop offset="1" stop-color="#7A5A26"/>
+          </linearGradient>
+        </defs>
+        <path fill-rule="evenodd" fill="url(#goldBase)" d="M100 24 C120 8 160 3 194 15 C192 36 179 60 151 68 C131 74 113 64 100 54 C87 64 69 74 49 68 C21 60 8 36 6 15 C40 3 80 8 100 24 Z M42 36 C52 25 74 26 83 39 C73 48 53 48 42 36 Z M158 36 C148 25 126 26 117 39 C127 48 147 48 158 36 Z"/>
+        <path fill-rule="evenodd" fill="url(#gold)" opacity=".85" d="M100 24 C120 8 160 3 194 15 C192 36 179 60 151 68 C131 74 113 64 100 54 C87 64 69 74 49 68 C21 60 8 36 6 15 C40 3 80 8 100 24 Z M42 36 C52 25 74 26 83 39 C73 48 53 48 42 36 Z M158 36 C148 25 126 26 117 39 C127 48 147 48 158 36 Z"/>
+        <path d="M100 30 C100 40 100 46 100 52" stroke="#5E4219" stroke-width="1" fill="none" opacity=".6"/>
+        <path d="M22 22 C40 16 62 17 80 26 M178 22 C160 16 138 17 120 26" stroke="#FFF4D6" stroke-width=".8" fill="none" opacity=".55"/>
+      </svg>
+      <p class="kicker" id="kicker">Valeria te convoca a</p>
+      <h1 id="title">Cabaret Negro</h1>
+      <p class="sub" id="sub">Una sesión privada. La noche del 31 de octubre.</p>
     </div>
-    <p class="message" id="message" aria-live="polite"></p>
-    <button class="skip" id="skip" type="button" hidden>Saltar al mensaje</button>
+    <a class="down" href="#reglas">Las reglas<i></i></a>
   </section>
 
-  <section class="details" id="details" hidden>
-    <h1 id="title">Noche de brujas</h1>
-    <p class="lede" id="lede">Valeria te invoca a su fiesta de Halloween.</p>
-
+  <section class="rules" id="reglas">
+    <h2>Las reglas de la casa</h2>
     <dl class="facts">
-      <dt>Cuándo</dt><dd id="when"></dd>
-      <dt>Dónde</dt><dd id="where"></dd>
-      <dt>Disfraz</dt><dd id="dress"></dd>
-      <dt>Trae</dt><dd id="bring"></dd>
+      <div class="fact"><dt>Cuándo</dt><dd id="when"></dd></div>
+      <div class="fact"><dt>Dónde</dt><dd id="where"></dd></div>
+      <div class="fact"><dt>Vestimenta</dt><dd>Negro absoluto, de pies a cabeza.</dd></div>
+      <div class="fact"><dt>Rostro</dt><dd>Antifaz o máscara. Elige uno.<small>Nada de disfraces.</small></dd></div>
+      <div class="fact"><dt>Contraseña</dt><dd><span class="password" id="password"></span><small>Dila en la puerta.</small></dd></div>
     </dl>
 
     <p class="countdown" id="countdown"></p>
 
-    <div class="actions">
-      <a class="btn primary" id="rsvp" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
-      <a class="btn" id="cal" target="_blank" rel="noopener">Agregar a mi calendario</a>
-      <a class="btn" id="map" target="_blank" rel="noopener">Ver ubicación</a>
-    </div>
+    <button class="oath" id="oath" type="button" aria-describedby="oathHelp"><span id="oathText">Mantén presionado para jurar</span></button>
+    <p class="oath-help" id="oathHelp">Al terminar se abre WhatsApp para confirmar tu asistencia.</p>
+    <a class="ghost" id="cal" target="_blank" rel="noopener">Agregar a mi calendario</a>
+    <a class="ghost" id="map" target="_blank" rel="noopener" hidden>Ver ubicación</a>
 
-    <button class="again" id="again" type="button">Invocar otra vez</button>
+    <p class="seal">Lo que pasa en el cabaret, se queda en el cabaret.</p>
   </section>
 </main>
 
@@ -300,193 +219,307 @@ main { position: relative; z-index: 1; }
    EDITA AQUÍ los datos de la fiesta
    ========================================================= */
 const CONFIG = {
-  titulo: "Noche de brujas",
+  titulo: "Cabaret Negro",
   anfitriona: "Valeria",
   inicio: "2026-10-31T21:00:00-06:00",   // fecha y hora (CDMX)
   fin:    "2026-11-01T03:00:00-06:00",
   cuandoTexto: "Sábado 31 de octubre, 9:00 pm",
-  lugarTexto: "Dirección por confirmar",
-  lugarMaps: "Ciudad de México",          // lo que se busca en Google Maps
-  disfraz: "Obligatorio. Sin disfraz no hay entrada.",
-  trae: "Algo de tomar y tu mejor susto.",
-  whatsapp: "5215500000000",              // tu número con 521 + 10 dígitos, sin espacios
-  // lo que deletrea la planchette (solo letras A–Z y números)
-  mensaje: ["VEN", "31", "OCT"]
+  // si dejas lugarMaps vacío, la dirección queda en secreto y se pide por WhatsApp
+  lugarTexto: "Se revela solo a quien jure asistir.",
+  lugarMaps: "",
+  contrasena: "Nocturna",
+  whatsapp: "5215500000000",              // 521 + tus 10 dígitos, sin espacios
+  mensajeWhatsApp: "Juro asistir al Cabaret Negro 🖤🎭"
 };
 /* ========================================================= */
 
 const $ = (id) => document.getElementById(id);
-const board = $("board"), planchette = $("planchette"), message = $("message");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* ---------- llenar detalles ---------- */
+/* ---------- textos ---------- */
 $("title").textContent = CONFIG.titulo;
-$("lede").textContent = `${CONFIG.anfitriona} te invoca a su fiesta de Halloween.`;
+$("kicker").textContent = `${CONFIG.anfitriona} te convoca a`;
 $("when").textContent = CONFIG.cuandoTexto;
-const mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.lugarMaps);
-$("where").innerHTML = "";
-const a = document.createElement("a"); a.href = mapsUrl; a.target = "_blank"; a.rel = "noopener"; a.textContent = CONFIG.lugarTexto;
-$("where").append(a);
-$("dress").textContent = CONFIG.disfraz;
-$("bring").textContent = CONFIG.trae;
-$("map").href = mapsUrl;
-$("rsvp").href = `https://wa.me/${CONFIG.whatsapp}?text=` + encodeURIComponent(`¡Ahí estaré en tu fiesta de Halloween! 🎃`);
+$("password").textContent = "«" + CONFIG.contrasena + "»";
+if (CONFIG.lugarMaps) {
+  const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.lugarMaps);
+  const a = document.createElement("a"); a.href = url; a.target = "_blank"; a.rel = "noopener"; a.textContent = CONFIG.lugarTexto;
+  $("where").append(a); $("map").href = url; $("map").hidden = false;
+} else {
+  $("where").textContent = CONFIG.lugarTexto;
+}
+const waText = CONFIG.mensajeWhatsApp + (CONFIG.lugarMaps ? "" : " ¿Me revelas la dirección?");
+const waUrl = `https://wa.me/${CONFIG.whatsapp}?text=` + encodeURIComponent(waText);
 const gcal = (d) => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, "");
 $("cal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
-  + "&text=" + encodeURIComponent(`${CONFIG.titulo} · Halloween con ${CONFIG.anfitriona}`)
+  + "&text=" + encodeURIComponent(`${CONFIG.titulo} · ${CONFIG.anfitriona}`)
   + "&dates=" + gcal(CONFIG.inicio) + "/" + gcal(CONFIG.fin)
-  + "&location=" + encodeURIComponent(CONFIG.lugarTexto)
-  + "&details=" + encodeURIComponent("Disfraz: " + CONFIG.disfraz);
+  + "&details=" + encodeURIComponent("Todo negro. Antifaz o máscara. Contraseña: " + CONFIG.contrasena);
 
 function tick() {
-  const ms = new Date(CONFIG.inicio) - Date.now();
-  const el = $("countdown");
-  if (ms <= 0 && ms > -6 * 3600e3) { el.innerHTML = "La invocación ya empezó<strong>Te esperamos</strong>"; return; }
-  if (ms <= 0) { el.innerHTML = "Los espíritus ya se fueron<strong>Hasta el próximo año</strong>"; return; }
+  const ms = new Date(CONFIG.inicio) - Date.now(), el = $("countdown");
+  if (ms <= 0 && ms > -6 * 36e5) { el.innerHTML = "La sesión ya empezó<strong>Te esperamos</strong>"; return; }
+  if (ms <= 0) { el.innerHTML = "El telón ya cayó<strong>Hasta el próximo año</strong>"; return; }
   const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
-  const parts = d > 0 ? `${d} ${d === 1 ? "día" : "días"}, ${h} h` : `${h} h ${m} min`;
-  el.innerHTML = `Faltan<strong>${parts}</strong>`;
+  el.innerHTML = "El telón se abre en<strong>" + (d > 0 ? `${d} ${d === 1 ? "día" : "días"}, ${h} h` : `${h} h ${m} min`) + "</strong>";
 }
 tick(); setInterval(tick, 30000);
 
-/* ---------- construir la tabla ---------- */
-const ASPECT = 2 / 3; // alto / ancho
-const pos = {};
-function place(key, x, y, r = 0, cls = "") {
-  const s = document.createElement("span");
-  s.className = "glyph " + cls; s.textContent = key;
-  s.style.left = x + "%"; s.style.top = y + "%"; s.style.setProperty("--r", r + "deg");
-  board.append(s); pos[key] = { x, y, el: s };
-}
-function arc(letters, x0, x1, base, lift) {
-  const n = letters.length;
-  letters.split("").forEach((ch, i) => {
-    const t = i / (n - 1);
-    const x = x0 + (x1 - x0) * t;
-    const y = base - lift * Math.sin(Math.PI * t);
-    const ang = Math.atan2(-lift * Math.PI * Math.cos(Math.PI * t) * ASPECT, (x1 - x0)) * 180 / Math.PI;
-    place(ch, x, y, ang);
-  });
-}
-place("SÍ", 13, 13, 0, "word");
-place("NO", 87, 13, 0, "word");
-arc("ABCDEFGHIJKLM", 9, 91, 47, 17);
-arc("NOPQRSTUVWXYZ", 11, 89, 67, 15);
-"1234567890".split("").forEach((n, i) => place(n, 24 + i * (52 / 9), 81, 0, "num"));
-place("ADIÓS", 50, 92, 0, "word");
-// "NO" y "N" comparten tecla en pos: la letra N quedó registrada antes, guardamos aparte
-const letterPos = {};
-board.querySelectorAll(".glyph").forEach((el) => {
-  const k = el.textContent;
-  if (!el.classList.contains("word")) letterPos[k] = { x: parseFloat(el.style.left), y: parseFloat(el.style.top), el };
-});
+/* =========================================================
+   Telón de terciopelo, humo y reflector (WebGL)
+   ========================================================= */
+const canvas = $("stage");
+const gl = canvas.getContext("webgl", { antialias: false, alpha: false, powerPreference: "high-performance" });
+let open = 0, vel = 0, target = 0, scrollDim = 1;
 
-function moveTo(x, y) {
-  // la ventana de la planchette está en (50%, 35%) de su caja; caja = 22% ancho × 39.6% alto
-  planchette.style.left = (x - 11) + "%";
-  planchette.style.top = (y - 13.86) + "%";
-  planchette.style.setProperty("--tilt", (Math.random() * 16 - 8).toFixed(1) + "deg");
-}
-moveTo(50, 53);
+const FRAG = `
+precision highp float;
+uniform vec2 R; uniform float T, O, V, S;
+float h1(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+vec2 h2(vec2 p){ return fract(sin(vec2(dot(p, vec2(127.1,311.7)), dot(p, vec2(269.5,183.3)))) * 43758.5453); }
+float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h1(i),h1(i+vec2(1,0)),f.x), mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.03+vec2(1.7,9.2); a*=.5; } return v; }
 
-/* ---------- sonido (sin archivos) ---------- */
+vec3 velvet(float u, float y, float w, float lightX){
+  // u: 0 en la pared, 1 en el borde; w: ancho del telón en pantalla
+  float N = 7.0;
+  float wob = fbm(vec2(u*2.0, y*1.2 + T*0.02)) * 1.6;
+  float ph = u * N * 6.2831 + wob + y * 0.6;
+  float ridge = 0.5 + 0.5 * cos(ph);
+  float side = sin(ph);
+  float sheen = pow(abs(side), 5.0);              // brillo rasante del terciopelo
+  float valley = pow(1.0 - ridge, 2.0);
+  float lit = 0.35 + 0.65 * exp(-pow((lightX - 0.5) / 0.32, 2.0));
+  lit *= 0.55 + 0.45 * smoothstep(0.0, 0.9, y);
+  vec3 base = vec3(0.012, 0.006, 0.007);
+  vec3 nap  = vec3(0.20, 0.07, 0.08);
+  vec3 c = base + nap * (ridge * 0.35 + sheen * 0.9) * lit;
+  c *= 1.0 - valley * 0.75;
+  c += vec3(0.05,0.035,0.02) * smoothstep(0.93, 1.0, u) * lit; // canto del borde
+  return c;
+}
+
+void main(){
+  vec2 uv = gl_FragCoord.xy / R;
+  float asp = R.x / R.y;
+  vec2 p = vec2((uv.x - 0.5) * asp, uv.y);
+
+  // ---- escenario: reflector + humo ----
+  vec2 src = vec2(0.0, 1.25);
+  vec2 d = p - src;
+  float ang = atan(d.x, -d.y);
+  float cone = smoothstep(0.30, 0.0, abs(ang));
+  float smoke = fbm(vec2(p.x * 1.8, p.y * 1.3) + vec2(T * 0.025, -T * 0.04));
+  float smoke2 = fbm(p * 3.6 + vec2(-T * 0.05, T * 0.015));
+  float sm = smoothstep(0.25, 0.95, smoke * 0.75 + smoke2 * 0.45);
+  float beam = cone * (0.18 + 0.9 * sm) * exp(-length(d) * 0.75);
+  float core = smoothstep(0.08, 0.0, abs(ang)) * exp(-length(d) * 1.4) * 0.25;
+  float pool = exp(-pow(p.x / 0.6, 2.0) - pow((uv.y - 0.06) / 0.07, 2.0));
+  vec3 warm = vec3(1.0, 0.80, 0.54);
+  vec3 col = warm * (beam * 0.62 + core + pool * 0.22) * (0.35 + 0.65 * S);
+  col += vec3(0.02, 0.012, 0.01) * sm; // humo fuera del haz, apenas visible
+
+  // motas de polvo en el haz
+  for (int k = 0; k < 2; k++) {
+    float sc = 22.0 + float(k) * 17.0;
+    vec2 g = p * sc + vec2(T * 0.15, -T * (0.35 + float(k) * 0.2));
+    vec2 id = floor(g), f = fract(g) - 0.5;
+    vec2 r = h2(id + float(k) * 13.0);
+    vec2 o = (r - 0.5) * 0.7 + 0.12 * vec2(sin(T * 0.6 + r.x * 6.28), cos(T * 0.4 + r.y * 6.28));
+    float m = smoothstep(0.07, 0.0, length(f - o)) * step(0.86, h1(id + 7.3 + float(k)));
+    float tw = 0.6 + 0.4 * sin(T * 2.0 + r.x * 30.0);
+    col += warm * m * tw * cone * 0.9 * (0.3 + 0.7 * S);
+  }
+
+  // ---- telones ----
+  float hw = 0.5 * (1.0 - O * 0.86);
+  float yb = 1.0 - uv.y;
+  float sway = sin(uv.y * 4.0 + T * 1.1) * 0.0025 + V * 0.05 * yb * yb * sin(uv.y * 2.5 + T * 2.0);
+  float breathe = sin(T * 0.7) * 0.002 * yb;
+  float edgeL = hw + sway + breathe;
+  float edgeR = 1.0 - hw - sway + breathe;
+
+  if (uv.x < edgeL) {
+    col = velvet(uv.x / edgeL, uv.y, edgeL, uv.x);
+  } else if (uv.x > edgeR) {
+    col = velvet((1.0 - uv.x) / (1.0 - edgeR), uv.y, 1.0 - edgeR, uv.x);
+  } else {
+    // sombra que proyectan los telones sobre el escenario
+    float sh = smoothstep(0.0, 0.05, uv.x - edgeL) * smoothstep(0.0, 0.05, edgeR - uv.x);
+    col *= 0.25 + 0.75 * sh;
+  }
+
+  // ---- bambalina superior con galón dorado ----
+  float scal = 0.905 - 0.028 * abs(sin(uv.x * 3.14159 * 5.0));
+  if (uv.y > scal) {
+    float u = fract(uv.x * 5.0);
+    vec3 v = velvet(u, uv.y, 0.2, uv.x) * 0.9;
+    float trim = smoothstep(0.012, 0.0, uv.y - scal);
+    float gli = 0.6 + 0.4 * sin(uv.x * 220.0 + T * 0.5) * sin(uv.x * 37.0);
+    v = mix(v, vec3(0.55, 0.40, 0.18) * gli, trim * 0.9);
+    col = v;
+  } else if (uv.y > scal - 0.022) {
+    // flecos
+    float fr = step(0.5, fract(gl_FragCoord.x / 3.0)) * smoothstep(scal - 0.022, scal, uv.y);
+    float wig = noise(vec2(gl_FragCoord.x * 0.3, T)) ;
+    col = mix(col, vec3(0.45, 0.32, 0.14) * (0.6 + 0.4 * wig), fr * 0.85);
+  }
+
+  // viñeta y grano
+  vec2 q = (uv - 0.5) * vec2(asp, 1.0);
+  col *= smoothstep(1.25, 0.25, length(q));
+  col += (h1(gl_FragCoord.xy + fract(T) * 100.0) - 0.5) * 0.018;
+  gl_FragColor = vec4(max(col, 0.0), 1.0);
+}`;
+const VERT = "attribute vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }";
+
+let U = {};
+if (gl) {
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  ["R","T","O","V","S"].forEach((n) => U[n] = gl.getUniformLocation(prog, n));
+}
+function resize() {
+  const scale = Math.min(window.devicePixelRatio || 1, 1.5) * (innerWidth < 700 ? 0.8 : 0.7);
+  canvas.width = Math.round(innerWidth * scale); canvas.height = Math.round(window.innerHeight * scale);
+  if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+}
+resize(); addEventListener("resize", resize);
+addEventListener("scroll", () => { scrollDim = 1 - Math.min(scrollY / innerHeight, 1); }, { passive: true });
+
+let last = performance.now(), t0 = last;
+function frame(now) {
+  const dt = Math.min((now - last) / 1000, 0.05); last = now;
+  // resorte apenas subamortiguado: el telón se abre, pasa un poco y se asienta
+  const k = 3.2, c = 3.0;
+  vel += (k * (target - open) - c * vel) * dt; open += vel * dt;
+  if (gl) {
+    gl.uniform2f(U.R, canvas.width, canvas.height);
+    gl.uniform1f(U.T, reduce ? 4.0 : (now - t0) / 1000);
+    gl.uniform1f(U.O, Math.max(0, Math.min(open, 1.04)));
+    gl.uniform1f(U.V, vel);
+    gl.uniform1f(U.S, scrollDim);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* =========================================================
+   Sonido: zumbido grave, crepitar de vinilo, telón y campana
+   ========================================================= */
 let ctx, master, muted = false;
+function noiseBuffer(sec) {
+  const b = ctx.createBuffer(1, ctx.sampleRate * sec, ctx.sampleRate), d = b.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  return b;
+}
 function startAudio() {
   try {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
     master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
-    master.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 3);
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 320; lp.Q.value = 6; lp.connect(master);
-    const drone = ctx.createGain(); drone.gain.value = 0.09; drone.connect(lp);
-    [55, 55.6, 82.4].forEach((f) => { const o = ctx.createOscillator(); o.type = "sawtooth"; o.frequency.value = f; o.connect(drone); o.start(); });
-    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.08;
-    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = 180; lfo.connect(lfoAmt); lfoAmt.connect(lp.frequency); lfo.start();
+    master.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 2.5);
+    // zumbido
+    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 240; lp.connect(master);
+    const dg = ctx.createGain(); dg.gain.value = 0.06; dg.connect(lp);
+    [43.65, 43.9, 65.4, 87.3].forEach((f, i) => { const o = ctx.createOscillator(); o.type = i < 2 ? "sawtooth" : "triangle"; o.frequency.value = f; o.connect(dg); o.start(); });
+    const lfo = ctx.createOscillator(), la = ctx.createGain(); lfo.frequency.value = 0.07; la.gain.value = 110; lfo.connect(la); la.connect(lp.frequency); lfo.start();
+    // vinilo: siseo + chasquidos
+    const hiss = ctx.createBufferSource(); hiss.buffer = noiseBuffer(2); hiss.loop = true;
+    const hp = ctx.createBiquadFilter(); hp.type = "bandpass"; hp.frequency.value = 3200; hp.Q.value = .7;
+    const hg = ctx.createGain(); hg.gain.value = 0.012; hiss.connect(hp); hp.connect(hg); hg.connect(master); hiss.start();
+    const crackle = () => {
+      if (!ctx) return;
+      const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuffer(0.02);
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.05 + Math.random() * 0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.015);
+      const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 1500;
+      s.connect(f); f.connect(g); g.connect(master); s.start(t);
+      setTimeout(crackle, 40 + Math.random() * 380);
+    };
+    crackle();
     $("sound").hidden = false; renderSound();
-  } catch (e) { /* sin sonido, no pasa nada */ }
+  } catch (e) {}
 }
-function knock() {
-  if (!ctx || muted) return;
-  const t = ctx.currentTime;
-  const o = ctx.createOscillator(), g = ctx.createGain();
-  o.type = "sine"; o.frequency.setValueAtTime(190, t); o.frequency.exponentialRampToValueAtTime(70, t + .18);
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + .01); g.gain.exponentialRampToValueAtTime(0.0001, t + .35);
-  o.connect(g); g.connect(master); o.start(t); o.stop(t + .4);
+function rustle() { // telón deslizándose
+  if (!ctx) return;
+  const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuffer(4);
+  const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 0.6;
+  f.frequency.setValueAtTime(500, t); f.frequency.linearRampToValueAtTime(1400, t + 1.2); f.frequency.linearRampToValueAtTime(700, t + 3.5);
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 3.6);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + 4);
+}
+function bell(freq = 196, vol = 0.22) { // campana grave tipo FM
+  if (!ctx) return;
+  const t = ctx.currentTime, car = ctx.createOscillator(), mod = ctx.createOscillator(), mg = ctx.createGain(), g = ctx.createGain();
+  car.frequency.value = freq; mod.frequency.value = freq * 1.4;
+  mg.gain.setValueAtTime(freq * 2.2, t); mg.gain.exponentialRampToValueAtTime(1, t + 5);
+  mod.connect(mg); mg.connect(car.frequency);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 6);
+  car.connect(g); g.connect(master); car.start(t); mod.start(t); car.stop(t + 6.2); mod.stop(t + 6.2);
 }
 function renderSound() {
   $("sound").setAttribute("aria-label", muted ? "Activar sonido" : "Silenciar");
   $("sound").innerHTML = muted
-    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>'
-    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
 }
 $("sound").addEventListener("click", () => {
   muted = !muted; renderSound();
-  if (ctx) master.gain.setTargetAtTime(muted ? 0 : 0.5, ctx.currentTime, .2);
+  if (ctx) master.gain.setTargetAtTime(muted ? 0 : 0.7, ctx.currentTime, .2);
 });
 
-/* ---------- la sesión ---------- */
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-let run = 0;
-
-async function spell() {
-  const id = ++run;
-  message.innerHTML = "";
-  board.querySelectorAll(".glyph").forEach((g) => g.classList.remove("lit", "was"));
-  $("skip").hidden = false;
-  moveTo(50, 53);
-  await wait(900);
-  for (let w = 0; w < CONFIG.mensaje.length; w++) {
-    if (w > 0) {
-      const gap = document.createElement("span"); gap.className = "gap"; message.append(gap);
-      moveTo(50, 55); await wait(800); if (id !== run) return;
-    }
-    for (const ch of CONFIG.mensaje[w].toUpperCase()) {
-      const p = letterPos[ch]; if (!p) continue;
-      moveTo(p.x, p.y);
-      await wait(720); if (id !== run) return;
-      p.el.classList.add("lit"); knock();
-      const s = document.createElement("span"); s.textContent = ch; message.append(s);
-      await wait(520); if (id !== run) return;
-      p.el.classList.remove("lit"); p.el.classList.add("was");
-    }
-  }
-  moveTo(50, 53);
-  await wait(700); if (id !== run) return;
-  reveal(true);
-}
-
-function showWhole() {
-  message.innerHTML = "";
-  CONFIG.mensaje.forEach((w, i) => {
-    if (i) { const g = document.createElement("span"); g.className = "gap"; message.append(g); }
-    [...w].forEach((ch) => { const s = document.createElement("span"); s.textContent = ch; message.append(s); });
-  });
-}
-
-function reveal(scroll) {
-  $("skip").hidden = true;
-  const d = $("details");
-  d.hidden = false;
-  requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("shown")));
-  if (scroll) setTimeout(() => d.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }), 500);
-}
-
-$("skip").addEventListener("click", () => { run++; showWhole(); moveTo(50, 53); reveal(true); });
-$("again").addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-  setTimeout(spell, reduce ? 0 : 700);
-});
-
-$("gate").addEventListener("click", () => {
-  const g = $("gate");
-  if (g.classList.contains("lit")) return;
-  g.classList.add("lit");
+/* ---------- entrada ---------- */
+$("enter").addEventListener("click", () => {
   startAudio();
-  setTimeout(() => {
-    g.classList.add("gone");
-    document.body.classList.remove("locked");
-    if (reduce) { showWhole(); reveal(false); } else spell();
-  }, reduce ? 200 : 1300);
+  $("gate").classList.add("gone");
+  document.body.classList.remove("locked");
+  if (reduce) { open = target = 1; $("hero").classList.add("shown"); return; }
+  setTimeout(() => { target = 1; rustle(); }, 1400);
+  setTimeout(() => { $("hero").classList.add("shown"); bell(); }, 3000);
 });
+
+/* ---------- juramento: mantener presionado ---------- */
+const oath = $("oath"); let holdStart = 0, holdRaf = 0, sworn = false, holding = false;
+const HOLD = 1800;
+function holdLoop() {
+  const p = Math.min((performance.now() - holdStart) / HOLD, 1);
+  oath.style.setProperty("--p", p);
+  if (p >= 1) { finishOath(); return; }
+  holdRaf = requestAnimationFrame(holdLoop);
+}
+function startHold(e) {
+  if (sworn || holding) return;
+  e.preventDefault(); holding = true;
+  oath.classList.add("holding"); holdStart = performance.now(); holdRaf = requestAnimationFrame(holdLoop);
+  if (navigator.vibrate) navigator.vibrate(20);
+}
+function cancelHold() {
+  holding = false;
+  if (sworn) return;
+  cancelAnimationFrame(holdRaf); oath.classList.remove("holding");
+  oath.style.setProperty("--p", 0);
+}
+function finishOath() {
+  sworn = true; holding = false; oath.classList.remove("holding"); oath.classList.add("done");
+  $("oathText").textContent = "Juramento sellado";
+  if (navigator.vibrate) navigator.vibrate([40, 60, 120]);
+  bell(147, 0.3);
+  setTimeout(() => { location.href = waUrl; }, 900);
+  setTimeout(() => { sworn = false; oath.classList.remove("done"); oath.style.setProperty("--p", 0); $("oathText").textContent = "Mantén presionado para jurar"; }, 6000);
+}
+oath.addEventListener("pointerdown", startHold);
+["pointerup", "pointerleave", "pointercancel"].forEach((ev) => oath.addEventListener(ev, cancelHold));
+oath.addEventListener("contextmenu", (e) => e.preventDefault());
+oath.addEventListener("keydown", (e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) startHold(e); });
+oath.addEventListener("keyup", (e) => { if (e.key === " " || e.key === "Enter") cancelHold(); });
+oath.addEventListener("click", (e) => e.preventDefault());
 </script>
 </body>
 </html>
