@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cabaret Negro · Valeria te convoca</title>
-<meta name="description" content="Una sesión privada. Enciende el candelabro y busca la máscara.">
+<title>Cabaret Negro</title>
+<meta name="description" content="23 de octubre. Enciende el candelabro y busca la máscara.">
 <meta name="theme-color" content="#000000">
 
 <!-- Vista previa en WhatsApp -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Cabaret Negro 🕯️">
-<meta property="og:description" content="Valeria te convoca. Enciende el candelabro y busca la máscara.">
+<meta property="og:description" content="23 de octubre. Enciende el candelabro y busca la máscara.">
 <meta property="og:url" content="https://valerycruzbe.github.io/halloween/">
 <meta property="og:image" content="https://valerycruzbe.github.io/halloween/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -21,18 +21,17 @@
 <link rel="preload" as="image" href="img/candelabra.png">
 
 <style>
-@font-face { font-family: "Pirata One"; src: url("fonts/pirata-one.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Fell"; src: url("fonts/fell.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Fell"; font-style: italic; src: url("fonts/fell-italic.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Cormorant"; font-weight: 400; src: url("fonts/cormorant.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Cormorant"; font-weight: 400; font-style: italic; src: url("fonts/cormorant-italic.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Cormorant"; font-weight: 600; src: url("fonts/cormorant-600.woff2") format("woff2"); font-display: swap; }
 
 :root {
   --void: #000;
   --flame: #F4B544;
   --paper: #EEE9DF;
   --ink: #141110;
-  --ink-soft: #6A625A;
-  --display: "Pirata One", "UnifrakturMaguntia", Georgia, serif;
-  --body: "Fell", "IM Fell English", Georgia, serif;
+  --ink-soft: #6F665D;
+  --serif: "Cormorant", "Cormorant Garamond", Garamond, "Times New Roman", serif;
   --cw: 120px;   /* ancho del candelabro */
   /* posiciones (celular) */
   --start-x: 50%; --start-y: 42%;
@@ -46,11 +45,11 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--void); }
 body {
-  color: var(--paper); font-family: var(--body); font-size: 19px; line-height: 1.5;
+  color: var(--paper); font-family: var(--serif); font-size: 20px; line-height: 1.45;
   overflow: hidden; overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
 }
-body.playing, body.playing .relic { cursor: none; }
+body.playing, body.playing .relic, body.playing .sound { cursor: none; }
 
 /* ---------- la habitación (solo se ve con la luz) ---------- */
 .room {
@@ -59,22 +58,22 @@ body.playing, body.playing .relic { cursor: none; }
 }
 .writing {
   position: absolute; left: var(--start-x); top: calc(var(--start-y) - 21vh); margin: 0; z-index: 1;
-  transform: translate(-50%, 0) rotate(-2deg); text-align: center; white-space: nowrap;
-  font-family: var(--display); font-size: clamp(32px, 8.5vw, 50px); line-height: 1.05;
-  color: #efe4cf; opacity: .92; pointer-events: none;
-  text-shadow: 0 2px 6px rgba(0,0,0,.9);
+  transform: translate(-50%, 0); text-align: center; white-space: nowrap;
+  font-family: var(--serif); font-style: italic; font-size: clamp(30px, 8vw, 46px); line-height: 1.05;
+  color: #f1e7d4; opacity: .92; pointer-events: none; letter-spacing: .01em;
+  text-shadow: 0 2px 8px rgba(0,0,0,.95);
   transition: opacity 1.2s;
 }
-.writing small { display: block; font: italic 17px var(--body); color: #d9c9ae; margin-top: 8px; }
+.writing small { display: block; font-size: 17px; color: #d9c9ae; margin-top: 8px; }
 .writing.fade { opacity: 0; }
 
 .relic {
   position: absolute; transform: translate(-50%, -50%); z-index: 2;
   background: none; border: 0; padding: 0; cursor: pointer;
 }
-.relic img, .relic svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 16px 14px rgba(0,0,0,.85)); }
+.relic img { display: block; width: 100%; height: auto; filter: drop-shadow(0 16px 14px rgba(0,0,0,.85)); }
 .relic:focus-visible { outline: 2px dashed rgba(244,181,68,.7); outline-offset: 10px; border-radius: 50%; }
-#mask { left: var(--mask-x); top: var(--mask-y); width: clamp(90px, 24vw, 150px); }
+#mask { left: var(--mask-x); top: var(--mask-y); width: clamp(84px, 23vw, 140px); }
 #anti { left: var(--anti-x); top: var(--anti-y); width: clamp(120px, 34vw, 210px); transition: opacity 1.5s; }
 #anti.asleep { opacity: 0; pointer-events: none; }
 
@@ -130,24 +129,24 @@ body.lit .flame { opacity: 1; }
   transition: opacity 1.4s, visibility 1.4s;
 }
 .gate.gone { opacity: 0; visibility: hidden; }
-.gate .t { display: block; font-family: var(--display); font-size: clamp(34px, 9vw, 52px); line-height: 1.1; color: #cfc3ad; }
-.gate .s { display: block; font-style: italic; color: #7d7062; margin-top: 12px; font-size: 17px; }
+.gate .t { display: block; font-style: italic; font-size: clamp(30px, 8vw, 46px); line-height: 1.15; color: #d8ccb6; }
+.gate .s { display: block; color: #7d7062; margin-top: 12px; font-size: 17px; letter-spacing: .04em; }
 .gate:focus-visible .t { outline: 2px solid var(--flame); outline-offset: 10px; }
 
 /* ---------- tarjetas de presentación ---------- */
 .veil {
   position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.74);
-  display: grid; place-items: center; align-content: center; gap: 18px; padding: 18px;
+  display: grid; place-items: center; align-content: center; gap: 26px; padding: 18px;
   opacity: 0; visibility: hidden; transition: opacity .7s, visibility .7s; cursor: auto;
 }
 .veil.open { opacity: 1; visibility: visible; }
 .stage3d {
+  perspective: 1100px;
   transform: translate(var(--fx, 0), var(--fy2, 0)) scale(.18) rotate(-14deg);
   opacity: 0;
   transition: transform 1s cubic-bezier(.2,.8,.2,1), opacity .5s;
 }
 .veil.open .stage3d { transform: none; opacity: 1; }
-.stage3d { perspective: 1100px; }
 .tilt { transform-style: preserve-3d; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
 .bcard {
   position: relative; width: min(64vw, 290px); aspect-ratio: 51 / 89; cursor: pointer;
@@ -171,30 +170,30 @@ body.lit .flame { opacity: 1; }
 }
 .back { transform: rotateY(180deg); }
 
-.front { display: grid; place-items: center; align-content: center; gap: 18px; padding: 24px; }
-.front .seal { width: 58%; height: auto; opacity: .92; mix-blend-mode: multiply; }
-.front .brand { margin: 0; font-family: var(--display); font-size: clamp(22px, 6vw, 28px); line-height: 1; }
+.front { display: grid; place-items: center; align-content: center; gap: 22px; padding: 24px; }
+.front .seal { width: 60%; height: auto; opacity: .92; mix-blend-mode: multiply; }
+.front .brand { margin: 0; font-size: clamp(22px, 6vw, 27px); font-style: italic; line-height: 1; letter-spacing: .02em; }
 
-.back { padding: 28px 24px 22px; display: flex; flex-direction: column; }
-.back .pre { margin: 0; font-style: italic; color: var(--ink-soft); font-size: 15px; }
-.back h3 { margin: 2px 0 0; font-family: var(--display); font-weight: 400; font-size: clamp(30px, 8.4vw, 38px); line-height: 1; }
-.data { margin: auto 0 0; display: grid; gap: 12px; }
-.data dt { font-style: italic; font-size: 14px; color: var(--ink-soft); line-height: 1.2; }
-.data dd { margin: 0; font-size: 18px; line-height: 1.25; }
-.data a, .vows a { color: var(--ink); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-.mini { position: absolute; right: 20px; bottom: 20px; width: 34px; height: auto; opacity: .85; mix-blend-mode: multiply; }
-.vows { list-style: none; padding: 0; margin: auto 0 0; font-size: 17px; line-height: 1.3; }
-.vows li { padding: 9px 0; border-top: 1px solid rgba(20,17,16,.16); }
-.vows li:first-child { border-top: 0; padding-top: 0; }
-.vows .pass { font-family: var(--display); font-size: 22px; }
-.vows .muted { display: block; font-style: italic; font-size: 14px; color: var(--ink-soft); }
+.back { padding: 32px 26px 26px; display: flex; flex-direction: column; }
+.back h3 { margin: 0; font-weight: 600; font-size: clamp(28px, 8vw, 34px); line-height: 1; letter-spacing: .01em; }
+.data { margin: auto 0 0; display: grid; gap: 16px; }
+.data dt { font-style: italic; font-size: 15px; color: var(--ink-soft); line-height: 1.2; }
+.data dd { margin: 0; font-size: 21px; line-height: 1.2; }
+.back a { color: var(--ink); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.dress { margin: auto 0 0; }
+.dress p { margin: 0 0 6px; font-size: 21px; line-height: 1.25; }
+.dress .pin { display: inline-block; margin-top: 18px; font-size: 16px; font-style: italic; }
+.spacer { height: 44px; flex: none; }
+.mini { position: absolute; right: 22px; bottom: 22px; width: 32px; height: auto; opacity: .85; mix-blend-mode: multiply; }
 
-.hint { margin: 0; font-style: italic; font-size: 15px; color: #a3968a; text-align: center; transition: opacity .6s; }
+/* cerrar con el cráneo */
 .close {
-  background: none; border: 1px solid rgba(238,233,223,.35); cursor: pointer; color: var(--paper);
-  font: 17px var(--body); padding: 9px 26px;
+  background: none; border: 0; cursor: pointer; color: #cfc2ab; padding: 4px 10px;
+  display: grid; justify-items: center; gap: 2px; font: italic 16px var(--serif); letter-spacing: .06em;
 }
-.close:focus-visible, .vows a:focus-visible, .data a:focus-visible { outline: 2px solid var(--flame); outline-offset: 3px; }
+.close img { width: 46px; height: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,.8)); transition: transform .3s; }
+.close:hover img { transform: translateY(-2px) rotate(-4deg); }
+.close:focus-visible, .back a:focus-visible { outline: 2px solid var(--flame); outline-offset: 3px; }
 
 .sound {
   position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 30;
@@ -203,7 +202,6 @@ body.lit .flame { opacity: 1; }
 }
 .sound[hidden] { display: none; }
 .sound svg { width: 19px; height: 19px; }
-body.playing .sound { cursor: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .stage3d, .bcard, .veil { transition: opacity .4s, visibility .4s; }
@@ -216,27 +214,10 @@ body.playing .sound { cursor: none; }
 <div class="room" id="room">
   <p class="writing" id="writing">Busca la máscara<small id="how">Mueve el candelabro</small></p>
 
-  <!-- Máscara blanca: reemplazar por img/mascara.png cuando esté lista -->
-  <button class="relic" id="mask" type="button" aria-label="Máscara blanca: abrir la convocatoria">
-    <svg viewBox="0 0 120 160" aria-hidden="true">
-      <defs>
-        <radialGradient id="porcelain" cx="45%" cy="38%" r="70%">
-          <stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#ebe8e2"/><stop offset="1" stop-color="#a9a49b"/>
-        </radialGradient>
-        <linearGradient id="ridge" x1="0" x2="1">
-          <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".5" stop-color="#000" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <path fill-rule="evenodd" fill="url(#porcelain)" d="M60 5 C93 5 109 33 107 72 C105 113 87 152 60 156 C33 152 15 113 13 72 C11 33 27 5 60 5Z
-        M29 66 C35 58 47 57 53 66 C47 72 35 72 29 66Z M91 66 C85 58 73 57 67 66 C73 72 85 72 91 66Z"/>
-      <path d="M57 72 C55 88 52 98 54 104 C57 107 63 107 66 104 C68 98 65 88 63 72Z" fill="url(#ridge)"/>
-      <path d="M28 58 C36 51 48 51 54 57 M92 58 C84 51 72 51 66 57" stroke="#8d877d" stroke-width="1.2" fill="none" opacity=".55"/>
-      <path d="M47 124 C53 120 57 121 60 123 C63 121 67 120 73 124 C67 128 53 128 47 124Z" fill="#c9c3b8"/>
-      <path d="M47 124 C55 125 65 125 73 124" stroke="#7d776d" stroke-width="1" fill="none"/>
-    </svg>
+  <button class="relic" id="mask" type="button" aria-label="Máscara blanca: abrir la tarjeta">
+    <img src="img/mascara.png" alt="" width="160" height="188">
   </button>
-
-  <button class="relic asleep" id="anti" type="button" aria-label="Antifaz: ver el código de vestimenta" tabindex="-1">
+  <button class="relic asleep" id="anti" type="button" aria-label="Antifaz: ver el dress code" tabindex="-1">
     <img src="img/antifaz.png" alt="" width="308" height="266">
   </button>
   <span class="glint" id="glint"></span>
@@ -254,32 +235,28 @@ body.playing .sound { cursor: none; }
   <span><span class="t">Toca para encender el candelabro</span><span class="s">Sube el volumen</span></span>
 </button>
 
-<!-- Tarjeta 1: la convocatoria -->
-<div class="veil" id="veil1" role="dialog" aria-modal="true" aria-labelledby="c1t">
+<!-- Tarjeta 1: los datos -->
+<div class="veil" id="veil1" role="dialog" aria-modal="true" aria-label="Día, hora y ubicación">
   <div class="stage3d"><div class="tilt">
     <div class="bcard" tabindex="0" role="button" aria-label="Voltear la tarjeta">
       <div class="face front">
         <img class="seal" src="img/bull.png" alt="">
-        <p class="brand">Cabaret Negro</p>
       </div>
       <div class="face back">
-        <p class="pre" id="from">Valeria te convoca a</p>
-        <h3 id="c1t">Cabaret Negro</h3>
         <dl class="data">
           <div><dt>Día</dt><dd id="day"></dd></div>
           <div><dt>Hora</dt><dd id="hour"></dd></div>
-          <div><dt>Lugar</dt><dd id="place"></dd></div>
+          <div><dt>Ubicación</dt><dd><a id="maps" target="_blank" rel="noopener">Google Maps</a></dd></div>
         </dl>
-        <div style="height:46px"></div>
+        <div class="spacer"></div>
         <img class="mini" src="img/bull.png" alt="">
       </div>
     </div>
   </div></div>
-  <p class="hint">Toca la tarjeta para voltearla</p>
-  <button class="close" type="button" data-close>Cerrar</button>
+  <button class="close" type="button" data-close><img src="img/craneo.png" alt="">close</button>
 </div>
 
-<!-- Tarjeta 2: el código -->
+<!-- Tarjeta 2: dress code -->
 <div class="veil" id="veil2" role="dialog" aria-modal="true" aria-labelledby="c2t">
   <div class="stage3d"><div class="tilt">
     <div class="bcard" tabindex="0" role="button" aria-label="Voltear la tarjeta">
@@ -288,22 +265,18 @@ body.playing .sound { cursor: none; }
         <p class="brand">El código</p>
       </div>
       <div class="face back">
-        <p class="pre">Cabaret Negro</p>
-        <h3 id="c2t">El código</h3>
-        <ul class="vows">
-          <li>Negro absoluto, de pies a cabeza.</li>
-          <li>Antifaz o máscara. Elige uno.</li>
-          <li>Nada de disfraces.</li>
-          <li><span class="pass" id="pass"></span><span class="muted">La contraseña. Dila en la puerta.</span></li>
-          <li id="pinRow"><a id="pin" target="_blank" rel="noopener">Ver inspiración en Pinterest</a></li>
-        </ul>
-        <div style="height:40px"></div>
+        <h3 id="c2t">Dress code</h3>
+        <div class="dress">
+          <p>Full black</p>
+          <p>Usar una máscara o un antifaz</p>
+          <a class="pin" id="pin" target="_blank" rel="noopener">Pinterest</a>
+        </div>
+        <div class="spacer"></div>
         <img class="mini" src="img/bull.png" alt="">
       </div>
     </div>
   </div></div>
-  <p class="hint">Toca la tarjeta para voltearla</p>
-  <button class="close" type="button" data-close>Cerrar</button>
+  <button class="close" type="button" data-close><img src="img/craneo.png" alt="">close</button>
 </div>
 
 <button class="sound" id="sound" type="button" aria-label="Silenciar" hidden></button>
@@ -313,14 +286,10 @@ body.playing .sound { cursor: none; }
    EDITA AQUÍ los datos de la fiesta
    ========================================================= */
 const CONFIG = {
-  titulo: "Cabaret Negro",
-  anfitriona: "Valeria",
-  dia: "Sábado 31 de octubre",
-  hora: "9:00 pm",
-  lugar: "Dirección por confirmar",
-  lugarMaps: "",          // ej. "Calle Durango 123, Roma Norte, CDMX" (vacío = sin enlace a Maps)
-  contrasena: "Nocturna",
-  pinterest: ""           // enlace a tu tablero (vacío = no se muestra)
+  dia: "23 de octubre",
+  hora: "9 pm",
+  maps: "https://maps.app.goo.gl/fkLqFasmJuMbtfCW7",
+  pinterest: "https://pin.it/2v7jY3pK0"
 };
 /* ========================================================= */
 
@@ -329,20 +298,10 @@ const root = document.documentElement.style;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const touch = matchMedia("(pointer: coarse)").matches;
 
-/* ---------- textos ---------- */
-document.querySelectorAll(".brand")[0].textContent = CONFIG.titulo;
-$("c1t").textContent = CONFIG.titulo;
-$("from").textContent = `${CONFIG.anfitriona} te convoca a`;
 $("day").textContent = CONFIG.dia;
 $("hour").textContent = CONFIG.hora;
-if (CONFIG.lugarMaps) {
-  const a = document.createElement("a");
-  a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.lugarMaps);
-  a.target = "_blank"; a.rel = "noopener"; a.textContent = CONFIG.lugar;
-  $("place").append(a);
-} else $("place").textContent = CONFIG.lugar;
-$("pass").textContent = CONFIG.contrasena;
-if (CONFIG.pinterest) $("pin").href = CONFIG.pinterest; else $("pinRow").remove();
+$("maps").href = CONFIG.maps;
+$("pin").href = CONFIG.pinterest;
 $("how").textContent = touch ? "Arrastra el candelabro con el dedo" : "Mueve el candelabro";
 
 /* =========================================================
@@ -495,14 +454,14 @@ function openFrom(relic, veilId) {
   document.body.classList.remove("playing");
   veil.classList.add("open"); openCard = veil; opener = relic;
   paper(); setTimeout(() => bell(), 400);
-  // se muestra el frente con el sello y luego se voltea sola
+  // primero el frente con el cráneo, luego se voltea sola
   clearTimeout(flipTimer);
   flipTimer = setTimeout(() => { if (openCard === veil) { card.classList.add("flipped"); paper(.08); } }, 1900);
   setTimeout(() => card.focus({ preventScroll: true }), 1000);
 }
 function swapWriting(html) {
   const w = $("writing"); w.classList.add("fade");
-  setTimeout(() => { w.innerHTML = html; w.classList.remove("fade"); }, 1200);
+  if (html) setTimeout(() => { w.innerHTML = html; w.classList.remove("fade"); }, 1200);
 }
 function closeCard() {
   if (!openCard) return;
@@ -513,9 +472,9 @@ function closeCard() {
   if (id === "veil1" && !found.anti) {
     found.anti = true;
     const a = $("anti"); a.classList.remove("asleep"); a.tabIndex = 0;
-    swapWriting("Ahora el antifaz<small>Sigue buscando</small>");
+    swapWriting("Ahora el antifaz");
   }
-  if (id === "veil2") swapWriting("Te esperamos<small>Toca la máscara o el antifaz para volver a leer</small>");
+  if (id === "veil2") swapWriting(null);
   if (opener) opener.focus({ preventScroll: true });
 }
 document.querySelectorAll(".bcard").forEach((c) => {
