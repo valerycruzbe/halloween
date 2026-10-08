@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cabaret Negro · Valeria te convoca</title>
-<meta name="description" content="Sesión privada. Sábado 31 de octubre, 9:00 pm. Todo negro, antifaz o máscara.">
+<meta name="description" content="Una sesión privada. Enciende la vela y busca la máscara.">
 <meta name="theme-color" content="#000000">
 
 <!-- Vista previa en WhatsApp -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="Cabaret Negro 🎭">
-<meta property="og:description" content="Valeria te convoca. Sábado 31 de octubre. Todo negro, antifaz o máscara. Abre con sonido.">
+<meta property="og:title" content="Cabaret Negro 🕯️">
+<meta property="og:description" content="Valeria te convoca. Enciende la vela y busca la máscara.">
 <meta property="og:url" content="https://valerycruzbe.github.io/halloween/">
 <meta property="og:image" content="https://valerycruzbe.github.io/halloween/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -18,201 +18,334 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <style>
-@font-face { font-family: "Bodoni"; src: url("fonts/bodoni.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Bodoni"; font-style: italic; src: url("fonts/bodoni-italic.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Pirata One"; src: url("fonts/pirata-one.woff2") format("woff2"); font-display: swap; }
 @font-face { font-family: "Fell"; src: url("fonts/fell.woff2") format("woff2"); font-display: swap; }
 @font-face { font-family: "Fell"; font-style: italic; src: url("fonts/fell-italic.woff2") format("woff2"); font-display: swap; }
 
 :root {
-  --void: #000000;
-  --gold: #C9A45C;
-  --gold-hi: #F1D9A0;
-  --bone: #E9E1D0;
-  --ash: #8E8577;
-  --wine: #3A0810;
-  --display: "Bodoni", "Bodoni Moda", Didot, "Times New Roman", serif;
+  --void: #000;
+  --wall: #0b0806;
+  --flame: #F4B544;
+  --paper: #ECE5D5;
+  --ink: #120E0B;
+  --ink-soft: #5B5046;
+  --blood: #6B0F1A;
+  --display: "Pirata One", "UnifrakturMaguntia", Georgia, serif;
   --body: "Fell", "IM Fell English", Georgia, serif;
+  /* posiciones (celular) */
+  --start-x: 50%; --start-y: 40%;
+  --mask-x: 26%;  --mask-y: 80%;
+  --anti-x: 72%;  --anti-y: 17%;
 }
+@media (min-width: 760px) {
+  :root { --start-x: 50%; --start-y: 48%; --mask-x: 20%; --mask-y: 70%; --anti-x: 80%; --anti-y: 26%; }
+}
+
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; background: var(--void); }
+html, body { margin: 0; height: 100%; background: var(--void); }
 body {
-  margin: 0; min-height: 100dvh; background: var(--void); color: var(--bone);
-  font-family: var(--body); font-size: 19px; line-height: 1.55; overflow-x: hidden;
+  color: var(--paper); font-family: var(--body); font-size: 19px; line-height: 1.5;
+  overflow: hidden; overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
 }
-body.locked { overflow: hidden; }
+body.playing, body.playing .relic, body.playing .sound { cursor: none; }
 
-#stage {
-  position: fixed; inset: 0; width: 100vw; height: 100lvh; display: block; z-index: 0;
-  background: radial-gradient(60% 70% at 50% 0%, #2a2117, #000 70%); /* respaldo sin WebGL */
+/* ---------- la habitación (solo se ve con la vela) ---------- */
+.room {
+  position: fixed; inset: 0; touch-action: none;
+  background-color: var(--wall);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='130' viewBox='0 0 90 130'><g fill='none' stroke='%232b2017' stroke-width='1.6'><path d='M45 0 C68 22 68 43 45 65 C22 87 22 108 45 130 M45 0 C22 22 22 43 45 65 C68 87 68 108 45 130'/><path d='M0 0 C23 22 23 43 0 65 C-23 87 -23 108 0 130 M90 0 C67 22 67 43 90 65 C113 87 113 108 90 130'/></g><g fill='%23241a12'><path d='M45 22 C51 30 51 38 45 44 C39 38 39 30 45 22Z'/><path d='M0 87 C6 95 6 103 0 109 C-6 103 -6 95 0 87Z M90 87 C96 95 96 103 90 109 C84 103 84 95 90 87Z'/><circle cx='45' cy='52' r='2'/><circle cx='0' cy='117' r='2'/><circle cx='90' cy='117' r='2'/></g></svg>");
+  background-size: 90px 130px;
+}
+.room::after { /* textura de yeso */
+  content: ""; position: absolute; inset: 0; opacity: .5; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
-/* ---------- Entrada ---------- */
+.writing {
+  position: absolute; left: var(--start-x); top: calc(var(--start-y) + 13vh); margin: 0;
+  transform: translate(-50%, 0) rotate(-2deg); text-align: center; white-space: nowrap;
+  font-family: var(--display); font-size: clamp(30px, 8vw, 46px); line-height: 1.05;
+  color: #b8a184; opacity: .9; pointer-events: none; z-index: 1;
+  text-shadow: 0 1px 0 rgba(0,0,0,.8);
+  transition: opacity 1.2s;
+}
+.writing small { display: block; font: italic 17px var(--body); color: #9c8a73; margin-top: 8px; }
+.writing.fade { opacity: 0; }
+
+.relic {
+  position: absolute; transform: translate(-50%, -50%); z-index: 2;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.relic svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 14px 14px rgba(0,0,0,.9)); }
+.relic:focus-visible { outline: 2px dashed rgba(244,181,68,.7); outline-offset: 10px; border-radius: 50%; }
+#mask { left: var(--mask-x); top: var(--mask-y); width: clamp(92px, 24vw, 150px); }
+#anti { left: var(--anti-x); top: var(--anti-y); width: clamp(120px, 34vw, 200px); transition: opacity 1.5s; }
+#anti.asleep { opacity: 0; pointer-events: none; }
+
+/* ---------- luz ---------- */
+.warm, .dark { position: fixed; inset: 0; pointer-events: none; }
+.warm {
+  z-index: 4; mix-blend-mode: soft-light;
+  background: radial-gradient(circle var(--rw, 260px) at var(--lx, 50%) var(--ly, 40%), rgba(255,170,70,.75), rgba(255,140,40,.25) 45%, transparent 75%);
+}
+.dark {
+  z-index: 5;
+  background: radial-gradient(circle var(--r, 220px) at var(--lx, 50%) var(--ly, 40%),
+    rgba(0,0,0,0) 0%, rgba(0,0,0,.08) 28%, rgba(0,0,0,.45) 54%, rgba(0,0,0,.84) 78%, #000 100%);
+}
+body:not(.lit) .dark { background: #000; }
+
+/* ---------- palmatoria ---------- */
+.candle {
+  position: fixed; left: 0; top: 0; z-index: 6; width: 80px; height: 128px; pointer-events: none;
+  transform: translate(var(--cx, -200px), var(--cy, -200px));
+  will-change: transform;
+}
+.candle svg { position: absolute; inset: 0; width: 80px; height: 128px; }
+.flame {
+  position: absolute; left: 40px; top: 22px; width: 14px; height: 30px;
+  margin-left: -7px; margin-top: -28px;
+  transform-origin: 50% 100%; transform: rotate(var(--lean, 0deg)) scale(var(--fs, 1), var(--fy, 1));
+  border-radius: 50% 50% 50% 50% / 64% 64% 36% 36%;
+  background: radial-gradient(ellipse at 50% 78%, #fffbe8 0 16%, #ffd877 34%, var(--flame) 52%, rgba(214,90,30,.75) 70%, transparent 74%);
+  opacity: 0; transition: opacity .5s;
+}
+.flame::before { /* azul en la base */
+  content: ""; position: absolute; left: 4px; right: 4px; bottom: 1px; height: 7px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(90,120,255,.55), transparent 70%);
+}
+.flame::after { /* halo */
+  content: ""; position: absolute; left: 50%; top: 55%; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,200,110,.32), transparent 65%);
+}
+body.lit .flame { opacity: 1; }
+
+.glint {
+  position: absolute; left: var(--mask-x); top: var(--mask-y); width: 10px; height: 10px; margin: -5px;
+  border-radius: 50%; z-index: 6; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, rgba(255,255,255,.8), transparent 70%);
+}
+.glint.on { animation: glint 4s ease-in-out infinite; }
+@keyframes glint { 0%, 70%, 100% { opacity: 0; transform: scale(.5); } 80% { opacity: .5; transform: scale(1.6); } }
+
+/* ---------- entrada ---------- */
 .gate {
-  position: fixed; inset: 0; z-index: 30; background: var(--void);
-  display: grid; place-items: center; text-align: center; padding: 24px;
-  transition: opacity 1.6s ease, visibility 1.6s;
+  position: fixed; inset: 0; z-index: 40; background: #000; border: 0; width: 100%; color: inherit;
+  display: grid; place-items: center; text-align: center; cursor: pointer; font: inherit; padding: 24px;
+  transition: opacity 1.4s, visibility 1.4s;
 }
 .gate.gone { opacity: 0; visibility: hidden; }
-.gate p { margin: 0; }
-.gate .warn { font-style: italic; color: var(--ash); font-size: 18px; }
-.gate .who { font-family: var(--display); font-style: italic; font-size: clamp(34px, 9vw, 52px); line-height: 1.1; margin: 10px 0 34px; }
-.enter {
-  font: 20px var(--body); color: var(--gold-hi); background: transparent;
-  border: 1px solid var(--gold); padding: 14px 44px; cursor: pointer; letter-spacing: .04em;
-  transition: background .4s, color .4s;
-}
-.enter:hover { background: var(--gold); color: #000; }
-.gate .sound-hint { margin-top: 18px; font-size: 15px; color: var(--ash); }
+.gate .t { display: block; font-family: var(--display); font-size: clamp(34px, 9vw, 52px); line-height: 1.1; color: #cfc3ad; }
+.gate .s { display: block; font-style: italic; color: #7d7062; margin-top: 12px; font-size: 17px; }
+.gate:focus-visible .t { outline: 2px solid var(--flame); outline-offset: 10px; }
 
-/* ---------- Escena ---------- */
-main { position: relative; z-index: 2; }
-.hero {
-  min-height: 100svh; display: grid; place-items: center; text-align: center;
-  padding: 80px max(28px, 12vw) 90px;
+/* ---------- cartas ---------- */
+.veil {
+  position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.72);
+  display: grid; place-items: center; padding: 18px;
+  opacity: 0; visibility: hidden; transition: opacity .7s, visibility .7s; cursor: auto;
 }
-.hero-inner { opacity: 0; transform: translateY(14px) scale(.985); filter: blur(8px);
-  transition: opacity 2.4s ease, transform 2.4s cubic-bezier(.2,.7,.2,1), filter 2.4s ease; }
-.hero.shown .hero-inner { opacity: 1; transform: none; filter: none; }
-.mask { width: min(52vw, 230px); height: auto; display: block; margin: 0 auto 26px;
-  filter: drop-shadow(0 6px 18px rgba(0,0,0,.9)) drop-shadow(0 0 22px rgba(241,217,160,.18)); }
-.kicker { font-style: italic; font-size: 21px; margin: 0; color: var(--bone); }
-.hero h1 {
-  font-family: var(--display); font-style: italic; font-weight: 400;
-  font-size: clamp(58px, 17vw, 132px); line-height: .92; letter-spacing: -.02em;
-  margin: 8px 0 18px; color: var(--gold-hi);
-  background: linear-gradient(176deg, #FFF1CF 0%, #E7C98A 38%, #9C7A3C 62%, #E9CF95 82%, #B8914C 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  text-shadow: none;
+.veil.open { opacity: 1; visibility: visible; }
+.card {
+  position: relative; width: min(90vw, 410px); max-height: 88dvh; overflow: auto;
+  background-color: var(--paper); color: var(--ink);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .28  0 0 0 0 .2  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>"),
+    radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(90,60,30,.22));
+  padding: 46px 34px 30px; text-align: center;
+  box-shadow: 0 40px 80px rgba(0,0,0,.9), 0 0 120px rgba(244,181,68,.12);
+  clip-path: inset(50% 0 50% 0);
+  transform: translate(var(--fx, 0), var(--fy2, 0)) scale(.35) rotate(-4deg);
+  transition: clip-path .9s cubic-bezier(.7,0,.2,1) .25s, transform .9s cubic-bezier(.2,.8,.2,1);
+  user-select: text; -webkit-user-select: text; scrollbar-width: none;
 }
-.sub { margin: 0 auto; max-width: 22em; font-size: 20px; color: var(--bone); }
-.down {
-  position: absolute; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom)); transform: translateX(-50%);
-  color: var(--ash); font-style: italic; font-size: 16px; text-decoration: none;
-  display: grid; justify-items: center; gap: 8px; opacity: 0; transition: opacity 2s 1.6s;
-}
-.hero.shown .down { opacity: 1; }
-.down i { display: block; width: 1px; height: 34px; background: linear-gradient(var(--gold), transparent); animation: drip 2.4s ease-in-out infinite; transform-origin: top; }
-@keyframes drip { 0% { transform: scaleY(0); opacity: 1 } 70% { transform: scaleY(1); opacity: 1 } 100% { transform: scaleY(1); opacity: 0 } }
+.veil.open .card { clip-path: inset(0 0 0 0); transform: none; }
+.frame { position: absolute; inset: 12px; pointer-events: none; border: 1px solid rgba(18,14,11,.55); }
+.frame::after { content: ""; position: absolute; inset: 4px; border: 1px solid rgba(18,14,11,.28); }
+.corner { position: absolute; width: 46px; height: 46px; }
+.corner.tl { left: -6px; top: -6px; }
+.corner.tr { right: -6px; top: -6px; transform: scaleX(-1); }
+.corner.bl { left: -6px; bottom: -6px; transform: scaleY(-1); }
+.corner.br { right: -6px; bottom: -6px; transform: scale(-1, -1); }
 
-/* ---------- Reglas ---------- */
-.rules {
-  max-width: 36rem; margin: 0 auto; padding: 40px max(28px, 11vw) 80px;
-  background: radial-gradient(90% 60% at 50% 40%, rgba(0,0,0,.82), rgba(0,0,0,.55) 70%, transparent);
+.emblem { width: 78px; height: auto; display: block; margin: 0 auto 10px; }
+.card .from { font-style: italic; color: var(--ink-soft); margin: 0; font-size: 17px; }
+.card h2 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 12vw, 58px); line-height: 1; margin: 4px 0 6px; }
+.rule { width: 120px; height: 12px; margin: 10px auto 18px; display: block; }
+.lines { margin: 0; text-align: center; }
+.lines dt { font-family: var(--display); font-size: 21px; color: var(--blood); margin-top: 14px; line-height: 1.2; }
+.lines dt:first-child { margin-top: 0; }
+.lines dd { margin: 0; font-size: 20px; }
+.lines a { color: var(--ink); text-underline-offset: 3px; }
+.vows { list-style: none; padding: 0; margin: 0; font-size: 20px; }
+.vows li { padding: 9px 0; }
+.vows li + li { border-top: 1px solid rgba(18,14,11,.18); }
+.pass { font-family: var(--display); font-size: 30px; letter-spacing: .04em; color: var(--blood); display: block; line-height: 1.1; }
+.card .note { font-style: italic; color: var(--ink-soft); font-size: 16px; margin: 4px 0 0; display: block; }
+.acts { display: grid; gap: 10px; margin-top: 24px; }
+.btn {
+  display: block; padding: 13px 16px; font: 19px var(--body); text-decoration: none; text-align: center;
+  border: 1px solid var(--ink); color: var(--ink); background: transparent; cursor: pointer;
 }
-.rules h2 {
-  font-family: var(--display); font-weight: 400; font-style: italic; text-align: center;
-  font-size: clamp(34px, 8.6vw, 52px); line-height: 1.05; margin: 0 0 34px; color: var(--bone); text-wrap: balance;
+.btn.solid { background: var(--ink); color: var(--paper); }
+.close {
+  margin: 22px auto 0; display: block; background: none; border: 0; cursor: pointer;
+  font: italic 17px var(--body); color: var(--ink-soft); text-decoration: underline; text-underline-offset: 4px; padding: 6px 10px;
 }
-.facts { margin: 0; }
-.fact { display: grid; grid-template-columns: 6.3em 1fr; gap: 18px; padding: 16px 0; border-top: 1px solid rgba(201,164,92,.28); }
-.fact:last-child { border-bottom: 1px solid rgba(201,164,92,.28); }
-.fact dt { font-family: var(--display); font-style: italic; font-size: 21px; color: var(--gold); line-height: 1.35; }
-.fact dd { margin: 0; }
-.fact dd small { display: block; color: var(--ash); font-size: 16px; font-style: italic; margin-top: 2px; }
-.password { font-family: var(--display); font-size: 26px; letter-spacing: .12em; color: var(--gold-hi); }
-.fact a { color: var(--bone); text-decoration-color: rgba(233,225,208,.45); text-underline-offset: 3px; }
-
-.countdown { text-align: center; margin: 44px 0 36px; font-style: italic; color: var(--ash); }
-.countdown strong { display: block; font: 400 clamp(36px, 10vw, 54px)/1.1 var(--display); color: var(--bone); font-style: normal; font-variant-numeric: lining-nums; margin-top: 4px; }
-
-.oath {
-  position: relative; display: block; width: 100%; overflow: hidden;
-  padding: 18px 20px; font: 20px var(--body); color: #000; background: var(--bone);
-  border: 0; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
-  -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
-}
-.oath::before {
-  content: ""; position: absolute; inset: 0; transform-origin: left; transform: scaleX(var(--p, 0));
-  background: linear-gradient(90deg, #6B0F1A, #8E1424);
-}
-.oath span { position: relative; transition: color .2s; }
-.oath.holding span, .oath.done span { color: var(--bone); }
-.oath.done::before { transform: scaleX(1); }
-.oath-help { text-align: center; color: var(--ash); font-style: italic; font-size: 15px; margin: 10px 0 22px; }
-.ghost {
-  display: block; text-align: center; text-decoration: none; padding: 15px 18px;
-  border: 1px solid rgba(201,164,92,.6); color: var(--bone); font-size: 19px; margin-top: 10px;
-}
-.oath:focus-visible, .ghost:focus-visible, .enter:focus-visible, .sound:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 3px; }
-.seal { text-align: center; margin: 46px 0 0; color: var(--ash); font-style: italic; font-size: 16px; }
+.btn:focus-visible, .close:focus-visible { outline: 2px solid var(--blood); outline-offset: 3px; }
 
 .sound {
-  position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 10;
-  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(201,164,92,.45);
-  background: rgba(0,0,0,.6); color: var(--gold-hi); display: grid; place-items: center; cursor: pointer;
+  position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 30;
+  width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(207,195,173,.25);
+  background: rgba(0,0,0,.5); color: #9d8f7c; display: grid; place-items: center; cursor: pointer;
 }
 .sound[hidden] { display: none; }
-.sound svg { width: 20px; height: 20px; }
+.sound svg { width: 19px; height: 19px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-inner, .down { transition: opacity .6s; transform: none; filter: none; }
-  .down i { animation: none; }
+  .card, .veil { transition: opacity .4s, visibility .4s; clip-path: none; transform: none; }
+  .glint.on { animation: none; opacity: .4; }
 }
 </style>
 </head>
-<body class="locked">
-<canvas id="stage" aria-hidden="true"></canvas>
+<body>
 
-<div class="gate" id="gate">
-  <div>
-    <p class="warn">Esta invitación es personal</p>
-    <p class="who" id="gateWho">Has sido convocada</p>
-    <button class="enter" id="enter" type="button">Entrar</button>
-    <p class="sound-hint">Sube el volumen</p>
-  </div>
+<div class="room" id="room">
+  <p class="writing" id="writing">Busca la máscara<small id="how">Mueve la vela</small></p>
+
+  <button class="relic" id="mask" type="button" aria-label="Máscara blanca: abrir la convocatoria">
+    <svg viewBox="0 0 120 160" aria-hidden="true">
+      <defs>
+        <radialGradient id="porcelain" cx="45%" cy="38%" r="70%">
+          <stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#ebe8e2"/><stop offset="1" stop-color="#a9a49b"/>
+        </radialGradient>
+        <linearGradient id="ridge" x1="0" x2="1">
+          <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".5" stop-color="#000" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path fill-rule="evenodd" fill="url(#porcelain)" d="M60 5 C93 5 109 33 107 72 C105 113 87 152 60 156 C33 152 15 113 13 72 C11 33 27 5 60 5Z
+        M29 66 C35 58 47 57 53 66 C47 72 35 72 29 66Z M91 66 C85 58 73 57 67 66 C73 72 85 72 91 66Z"/>
+      <path d="M57 72 C55 88 52 98 54 104 C57 107 63 107 66 104 C68 98 65 88 63 72Z" fill="url(#ridge)"/>
+      <path d="M28 58 C36 51 48 51 54 57 M92 58 C84 51 72 51 66 57" stroke="#8d877d" stroke-width="1.2" fill="none" opacity=".55"/>
+      <path d="M47 124 C53 120 57 121 60 123 C63 121 67 120 73 124 C67 128 53 128 47 124Z" fill="#c9c3b8"/>
+      <path d="M47 124 C55 125 65 125 73 124" stroke="#7d776d" stroke-width="1" fill="none"/>
+      <path d="M60 5 C93 5 109 33 107 72 C105 113 87 152 60 156" stroke="#7f7a70" stroke-width="1.5" fill="none" opacity=".35"/>
+    </svg>
+  </button>
+
+  <button class="relic asleep" id="anti" type="button" aria-label="Antifaz: ver el código de vestimenta" tabindex="-1">
+    <svg viewBox="0 0 220 110" aria-hidden="true">
+      <defs>
+        <linearGradient id="satin" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#2a2622"/><stop offset=".4" stop-color="#070605"/><stop offset=".55" stop-color="#3b3530"/><stop offset=".7" stop-color="#090807"/><stop offset="1" stop-color="#1d1a17"/>
+        </linearGradient>
+        <linearGradient id="gilt" x1="0" x2="1">
+          <stop offset="0" stop-color="#7a5a26"/><stop offset=".5" stop-color="#f1d9a0"/><stop offset="1" stop-color="#8a6a30"/>
+        </linearGradient>
+      </defs>
+      <path d="M14 30 C4 40 2 62 6 92 M206 30 C216 40 218 62 214 92" stroke="#1b1816" stroke-width="3" fill="none"/>
+      <path fill-rule="evenodd" fill="url(#satin)" stroke="url(#gilt)" stroke-width="2"
+        d="M110 34 C130 18 170 13 204 25 C202 46 189 70 161 78 C141 84 123 74 110 64 C97 74 79 84 59 78 C31 70 18 46 16 25 C50 13 90 18 110 34 Z
+           M52 46 C62 35 84 36 93 49 C83 58 63 58 52 46 Z M168 46 C158 35 136 36 127 49 C137 58 157 58 168 46 Z"/>
+      <path d="M30 30 C50 24 74 26 92 36 M190 30 C170 24 146 26 128 36" stroke="url(#gilt)" stroke-width="1" fill="none" opacity=".7"/>
+      <circle cx="110" cy="40" r="3" fill="url(#gilt)"/>
+    </svg>
+  </button>
+  <span class="glint" id="glint"></span>
 </div>
 
-<main>
-  <section class="hero" id="hero">
-    <div class="hero-inner">
-      <svg class="mask" viewBox="0 0 200 84" aria-hidden="true">
-        <defs>
-          <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#7A5A26"/>
-            <stop offset=".35" stop-color="#E9CF95"/>
-            <stop offset=".5" stop-color="#FFF4D6"/>
-            <stop offset=".65" stop-color="#C9A45C"/>
-            <stop offset="1" stop-color="#5E4219"/>
-            <animateTransform attributeName="gradientTransform" type="translate" values="-1 0; 1 0; 1 0" keyTimes="0; .45; 1" dur="6s" repeatCount="indefinite"/>
-          </linearGradient>
-          <linearGradient id="goldBase" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#D9BA7A"/><stop offset="1" stop-color="#7A5A26"/>
-          </linearGradient>
-        </defs>
-        <path fill-rule="evenodd" fill="url(#goldBase)" d="M100 24 C120 8 160 3 194 15 C192 36 179 60 151 68 C131 74 113 64 100 54 C87 64 69 74 49 68 C21 60 8 36 6 15 C40 3 80 8 100 24 Z M42 36 C52 25 74 26 83 39 C73 48 53 48 42 36 Z M158 36 C148 25 126 26 117 39 C127 48 147 48 158 36 Z"/>
-        <path fill-rule="evenodd" fill="url(#gold)" opacity=".85" d="M100 24 C120 8 160 3 194 15 C192 36 179 60 151 68 C131 74 113 64 100 54 C87 64 69 74 49 68 C21 60 8 36 6 15 C40 3 80 8 100 24 Z M42 36 C52 25 74 26 83 39 C73 48 53 48 42 36 Z M158 36 C148 25 126 26 117 39 C127 48 147 48 158 36 Z"/>
-        <path d="M100 30 C100 40 100 46 100 52" stroke="#5E4219" stroke-width="1" fill="none" opacity=".6"/>
-        <path d="M22 22 C40 16 62 17 80 26 M178 22 C160 16 138 17 120 26" stroke="#FFF4D6" stroke-width=".8" fill="none" opacity=".55"/>
-      </svg>
-      <p class="kicker" id="kicker">Valeria te convoca a</p>
-      <h1 id="title">Cabaret Negro</h1>
-      <p class="sub" id="sub">Una sesión privada. La noche del 31 de octubre.</p>
-    </div>
-    <a class="down" href="#reglas">Las reglas<i></i></a>
-  </section>
+<div class="warm" id="warm"></div>
+<div class="dark" id="dark"></div>
 
-  <section class="rules" id="reglas">
-    <h2>Las reglas de la casa</h2>
-    <dl class="facts">
-      <div class="fact"><dt>Cuándo</dt><dd id="when"></dd></div>
-      <div class="fact"><dt>Dónde</dt><dd id="where"></dd></div>
-      <div class="fact"><dt>Vestimenta</dt><dd>Negro absoluto, de pies a cabeza.</dd></div>
-      <div class="fact"><dt>Rostro</dt><dd>Antifaz o máscara. Elige uno.<small>Nada de disfraces.</small></dd></div>
-      <div class="fact"><dt>Contraseña</dt><dd><span class="password" id="password"></span><small>Dila en la puerta.</small></dd></div>
+<div class="candle" id="candle" aria-hidden="true">
+  <svg viewBox="0 0 80 128">
+    <defs>
+      <linearGradient id="wax" x1="0" x2="1"><stop offset="0" stop-color="#b9ab90"/><stop offset=".45" stop-color="#efe6d0"/><stop offset="1" stop-color="#9c8f76"/></linearGradient>
+      <linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#4a3416"/><stop offset=".45" stop-color="#c79a4e"/><stop offset=".6" stop-color="#f0d08d"/><stop offset="1" stop-color="#5a4019"/></linearGradient>
+    </defs>
+    <line x1="40" y1="22" x2="40" y2="30" stroke="#1a120a" stroke-width="1.6"/>
+    <path d="M33 30 H47 V86 H33 Z" fill="url(#wax)"/>
+    <path d="M33 30 C33 28 36 27 40 27 C44 27 47 28 47 30 C47 33 45 36 44 40 C43 44 41 44 41 40 C41 36 37 34 35 34 C34 34 33 32 33 30Z" fill="#f7f0de"/>
+    <ellipse cx="40" cy="88" rx="12" ry="3" fill="#6b4c1f"/>
+    <path d="M27 86 H53 L50 92 H30 Z" fill="url(#brass)"/>
+    <ellipse cx="40" cy="96" rx="34" ry="8" fill="url(#brass)"/>
+    <ellipse cx="40" cy="94" rx="28" ry="5" fill="#3a2810" opacity=".55"/>
+    <path d="M72 96 C80 96 80 108 72 108" stroke="url(#brass)" stroke-width="4" fill="none"/>
+  </svg>
+  <div class="flame" id="flame"></div>
+</div>
+
+<button class="gate" id="gate" type="button">
+  <span><span class="t">Toca para encender la vela</span><span class="s">Sube el volumen</span></span>
+</button>
+
+<!-- Carta 1: la convocatoria -->
+<div class="veil" id="veil1" role="dialog" aria-modal="true" aria-labelledby="c1t">
+  <article class="card">
+    <div class="frame"><svg class="corner tl"><use href="#flourish"/></svg><svg class="corner tr"><use href="#flourish"/></svg><svg class="corner bl"><use href="#flourish"/></svg><svg class="corner br"><use href="#flourish"/></svg></div>
+    <svg class="emblem" viewBox="0 0 120 110" aria-hidden="true"><use href="#bull"/></svg>
+    <p class="from" id="from">Valeria te convoca a</p>
+    <h2 id="c1t">Cabaret Negro</h2>
+    <svg class="rule" viewBox="0 0 120 12" aria-hidden="true"><use href="#rule"/></svg>
+    <dl class="lines">
+      <dt>El día</dt><dd id="day"></dd>
+      <dt>La hora</dt><dd id="hour"></dd>
+      <dt>El lugar</dt><dd id="place"></dd>
     </dl>
+    <button class="close" type="button" data-close>Cerrar la carta</button>
+  </article>
+</div>
 
-    <p class="countdown" id="countdown"></p>
-
-    <button class="oath" id="oath" type="button" aria-describedby="oathHelp"><span id="oathText">Mantén presionado para jurar</span></button>
-    <p class="oath-help" id="oathHelp">Al terminar se abre WhatsApp para confirmar tu asistencia.</p>
-    <a class="ghost" id="cal" target="_blank" rel="noopener">Agregar a mi calendario</a>
-    <a class="ghost" id="map" target="_blank" rel="noopener" hidden>Ver ubicación</a>
-
-    <p class="seal">Lo que pasa en el cabaret, se queda en el cabaret.</p>
-  </section>
-</main>
+<!-- Carta 2: el código -->
+<div class="veil" id="veil2" role="dialog" aria-modal="true" aria-labelledby="c2t">
+  <article class="card">
+    <div class="frame"><svg class="corner tl"><use href="#flourish"/></svg><svg class="corner tr"><use href="#flourish"/></svg><svg class="corner bl"><use href="#flourish"/></svg><svg class="corner br"><use href="#flourish"/></svg></div>
+    <svg class="emblem" viewBox="0 0 120 110" aria-hidden="true"><use href="#bull"/></svg>
+    <h2 id="c2t">El código</h2>
+    <svg class="rule" viewBox="0 0 120 12" aria-hidden="true"><use href="#rule"/></svg>
+    <ul class="vows">
+      <li>Negro absoluto, de pies a cabeza.</li>
+      <li>Antifaz o máscara. Elige uno.</li>
+      <li>Nada de disfraces.</li>
+      <li><span class="pass" id="pass"></span><span class="note">La contraseña. Dila en la puerta.</span></li>
+    </ul>
+    <div class="acts">
+      <a class="btn solid" id="rsvp" target="_blank" rel="noopener">Confirmar mi asistencia</a>
+      <a class="btn" id="cal" target="_blank" rel="noopener">Agregar a mi calendario</a>
+    </div>
+    <button class="close" type="button" data-close>Cerrar la carta</button>
+  </article>
+</div>
 
 <button class="sound" id="sound" type="button" aria-label="Silenciar" hidden></button>
+
+<!-- símbolos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bull" viewBox="0 0 120 110">
+      <circle cx="60" cy="52" r="50" fill="none" stroke="#120E0B" stroke-width="1"/>
+      <circle cx="60" cy="52" r="46" fill="none" stroke="#120E0B" stroke-width=".6" stroke-dasharray="1.5 3"/>
+      <path fill="#120E0B" d="M47 38 C34 37 20 30 15 12 C13 22 17 34 26 41 C33 46 42 47 49 45 Z M73 38 C86 37 100 30 105 12 C107 22 103 34 94 41 C87 46 78 47 71 45 Z"/>
+      <path fill="#120E0B" fill-rule="evenodd" d="M47 34 C52 29 68 29 73 34 C78 42 75 52 71 60 C68 70 66 82 62 92 C61 95 59 95 58 92 C54 82 52 70 49 60 C45 52 42 42 47 34 Z
+        M51 46 C53 43 57 43 58 47 C56 50 52 50 51 46 Z M69 46 C67 43 63 43 62 47 C64 50 68 50 69 46 Z M57 80 L59 86 L58 87 Z M63 80 L61 86 L62 87 Z"/>
+      <path d="M60 18 L62 24 L60 30 L58 24 Z" fill="#6B0F1A"/>
+    </symbol>
+    <symbol id="flourish" viewBox="0 0 46 46">
+      <g fill="none" stroke="#120E0B" stroke-width="1.1">
+        <path d="M6 44 V18 C6 11 11 6 18 6 H44"/>
+        <path d="M6 18 C12 18 18 12 18 6"/>
+        <path d="M11 30 C15 26 15 21 11 18 M30 11 C26 15 21 15 18 11"/>
+        <circle cx="12.5" cy="12.5" r="2.2" fill="#120E0B"/>
+      </g>
+    </symbol>
+    <symbol id="rule" viewBox="0 0 120 12">
+      <path d="M2 6 H48 M72 6 H118" stroke="#120E0B" stroke-width=".8"/>
+      <path d="M60 1 L65 6 L60 11 L55 6 Z" fill="none" stroke="#120E0B" stroke-width=".9"/>
+      <circle cx="60" cy="6" r="1.4" fill="#6B0F1A"/><circle cx="50" cy="6" r="1" fill="#120E0B"/><circle cx="70" cy="6" r="1" fill="#120E0B"/>
+    </symbol>
+  </defs>
+</svg>
 
 <script>
 /* =========================================================
@@ -221,248 +354,147 @@ main { position: relative; z-index: 2; }
 const CONFIG = {
   titulo: "Cabaret Negro",
   anfitriona: "Valeria",
-  inicio: "2026-10-31T21:00:00-06:00",   // fecha y hora (CDMX)
+  dia: "Sábado 31 de octubre",
+  hora: "9:00 de la noche",
+  inicio: "2026-10-31T21:00:00-06:00",
   fin:    "2026-11-01T03:00:00-06:00",
-  cuandoTexto: "Sábado 31 de octubre, 9:00 pm",
-  // si dejas lugarMaps vacío, la dirección queda en secreto y se pide por WhatsApp
-  lugarTexto: "Se revela solo a quien jure asistir.",
-  lugarMaps: "",
+  lugar: "Dirección por confirmar",
+  lugarMaps: "",                     // ej. "Calle Durango 123, Roma Norte, CDMX" (vacío = sin mapa)
   contrasena: "Nocturna",
-  whatsapp: "5215500000000",              // 521 + tus 10 dígitos, sin espacios
-  mensajeWhatsApp: "Juro asistir al Cabaret Negro 🖤🎭"
+  whatsapp: "5215500000000",         // 521 + tus 10 dígitos, sin espacios
+  mensajeWhatsApp: "Juro asistir al Cabaret Negro 🖤🕯️"
 };
 /* ========================================================= */
 
 const $ = (id) => document.getElementById(id);
+const root = document.documentElement.style;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const touch = matchMedia("(pointer: coarse)").matches;
 
 /* ---------- textos ---------- */
-$("title").textContent = CONFIG.titulo;
-$("kicker").textContent = `${CONFIG.anfitriona} te convoca a`;
-$("when").textContent = CONFIG.cuandoTexto;
-$("password").textContent = "«" + CONFIG.contrasena + "»";
+$("c1t").textContent = CONFIG.titulo;
+$("from").textContent = `${CONFIG.anfitriona} te convoca a`;
+$("day").textContent = CONFIG.dia;
+$("hour").textContent = CONFIG.hora;
 if (CONFIG.lugarMaps) {
-  const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.lugarMaps);
-  const a = document.createElement("a"); a.href = url; a.target = "_blank"; a.rel = "noopener"; a.textContent = CONFIG.lugarTexto;
-  $("where").append(a); $("map").href = url; $("map").hidden = false;
-} else {
-  $("where").textContent = CONFIG.lugarTexto;
-}
-const waText = CONFIG.mensajeWhatsApp + (CONFIG.lugarMaps ? "" : " ¿Me revelas la dirección?");
-const waUrl = `https://wa.me/${CONFIG.whatsapp}?text=` + encodeURIComponent(waText);
+  const a = document.createElement("a");
+  a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.lugarMaps);
+  a.target = "_blank"; a.rel = "noopener"; a.textContent = CONFIG.lugar;
+  $("place").append(a);
+} else $("place").textContent = CONFIG.lugar;
+$("pass").textContent = CONFIG.contrasena;
+$("rsvp").href = `https://wa.me/${CONFIG.whatsapp}?text=` + encodeURIComponent(CONFIG.mensajeWhatsApp);
 const gcal = (d) => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, "");
 $("cal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
   + "&text=" + encodeURIComponent(`${CONFIG.titulo} · ${CONFIG.anfitriona}`)
   + "&dates=" + gcal(CONFIG.inicio) + "/" + gcal(CONFIG.fin)
-  + "&details=" + encodeURIComponent("Todo negro. Antifaz o máscara. Contraseña: " + CONFIG.contrasena);
-
-function tick() {
-  const ms = new Date(CONFIG.inicio) - Date.now(), el = $("countdown");
-  if (ms <= 0 && ms > -6 * 36e5) { el.innerHTML = "La sesión ya empezó<strong>Te esperamos</strong>"; return; }
-  if (ms <= 0) { el.innerHTML = "El telón ya cayó<strong>Hasta el próximo año</strong>"; return; }
-  const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
-  el.innerHTML = "El telón se abre en<strong>" + (d > 0 ? `${d} ${d === 1 ? "día" : "días"}, ${h} h` : `${h} h ${m} min`) + "</strong>";
-}
-tick(); setInterval(tick, 30000);
+  + "&location=" + encodeURIComponent(CONFIG.lugarMaps || CONFIG.lugar)
+  + "&details=" + encodeURIComponent("Negro absoluto. Antifaz o máscara. Contraseña: " + CONFIG.contrasena);
+$("how").textContent = touch ? "Arrastra la vela con el dedo" : "Mueve la vela";
 
 /* =========================================================
-   Telón de terciopelo, humo y reflector (WebGL)
+   La vela: sigue al cursor o al dedo con un poco de inercia
    ========================================================= */
-const canvas = $("stage");
-const gl = canvas.getContext("webgl", { antialias: false, alpha: false, powerPreference: "high-performance" });
-let open = 0, vel = 0, target = 0, scrollDim = 1;
+const W = () => innerWidth, H = () => innerHeight;
+const css = getComputedStyle(document.documentElement);
+const pct = (name, size) => parseFloat(css.getPropertyValue(name)) / 100 * size;
+let tx = pct("--start-x", W()), ty = pct("--start-y", H());
+let lx = tx, ly = ty, vx = 0, lean = 0;
+const FINGER_OFFSET = 96; // en celular la llama queda arriba del dedo
+let openCard = null, opener = null;
+const isLit = () => document.body.classList.contains("lit");
 
-const FRAG = `
-precision highp float;
-uniform vec2 R; uniform float T, O, V, S;
-float h1(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-vec2 h2(vec2 p){ return fract(sin(vec2(dot(p, vec2(127.1,311.7)), dot(p, vec2(269.5,183.3)))) * 43758.5453); }
-float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
-  return mix(mix(h1(i),h1(i+vec2(1,0)),f.x), mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),f.x), f.y); }
-float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.03+vec2(1.7,9.2); a*=.5; } return v; }
-
-vec3 velvet(float u, float y, float w, float lightX){
-  // u: 0 en la pared, 1 en el borde; w: ancho del telón en pantalla
-  float N = 7.0;
-  float wob = fbm(vec2(u*2.0, y*1.2 + T*0.02)) * 1.6;
-  float ph = u * N * 6.2831 + wob + y * 0.6;
-  float ridge = 0.5 + 0.5 * cos(ph);
-  float side = sin(ph);
-  float sheen = pow(abs(side), 5.0);              // brillo rasante del terciopelo
-  float valley = pow(1.0 - ridge, 2.0);
-  float lit = 0.35 + 0.65 * exp(-pow((lightX - 0.5) / 0.32, 2.0));
-  lit *= 0.55 + 0.45 * smoothstep(0.0, 0.9, y);
-  vec3 base = vec3(0.012, 0.006, 0.007);
-  vec3 nap  = vec3(0.20, 0.07, 0.08);
-  vec3 c = base + nap * (ridge * 0.35 + sheen * 0.9) * lit;
-  c *= 1.0 - valley * 0.75;
-  c += vec3(0.05,0.035,0.02) * smoothstep(0.93, 1.0, u) * lit; // canto del borde
-  return c;
+function setTarget(e) {
+  if (!isLit() || openCard) return;
+  tx = e.clientX; ty = e.pointerType === "touch" ? e.clientY - FINGER_OFFSET : e.clientY;
 }
+addEventListener("pointermove", setTarget, { passive: true });
+addEventListener("pointerdown", setTarget, { passive: true });
+document.addEventListener("touchmove", (e) => { if (!openCard) e.preventDefault(); }, { passive: false });
+// con teclado, la luz va al elemento con foco
+document.addEventListener("focusin", (e) => {
+  if (!e.target.classList.contains("relic")) return;
+  const r = e.target.getBoundingClientRect(); tx = r.left + r.width / 2; ty = r.top - 20;
+});
 
-void main(){
-  vec2 uv = gl_FragCoord.xy / R;
-  float asp = R.x / R.y;
-  vec2 p = vec2((uv.x - 0.5) * asp, uv.y);
-
-  // ---- escenario: reflector + humo ----
-  vec2 src = vec2(0.0, 1.25);
-  vec2 d = p - src;
-  float ang = atan(d.x, -d.y);
-  float cone = smoothstep(0.30, 0.0, abs(ang));
-  float smoke = fbm(vec2(p.x * 1.8, p.y * 1.3) + vec2(T * 0.025, -T * 0.04));
-  float smoke2 = fbm(p * 3.6 + vec2(-T * 0.05, T * 0.015));
-  float sm = smoothstep(0.25, 0.95, smoke * 0.75 + smoke2 * 0.45);
-  float beam = cone * (0.18 + 0.9 * sm) * exp(-length(d) * 0.75);
-  float core = smoothstep(0.08, 0.0, abs(ang)) * exp(-length(d) * 1.4) * 0.25;
-  float pool = exp(-pow(p.x / 0.6, 2.0) - pow((uv.y - 0.06) / 0.07, 2.0));
-  vec3 warm = vec3(1.0, 0.80, 0.54);
-  vec3 col = warm * (beam * 0.62 + core + pool * 0.22) * (0.35 + 0.65 * S);
-  col += vec3(0.02, 0.012, 0.01) * sm; // humo fuera del haz, apenas visible
-
-  // motas de polvo en el haz
-  for (int k = 0; k < 2; k++) {
-    float sc = 22.0 + float(k) * 17.0;
-    vec2 g = p * sc + vec2(T * 0.15, -T * (0.35 + float(k) * 0.2));
-    vec2 id = floor(g), f = fract(g) - 0.5;
-    vec2 r = h2(id + float(k) * 13.0);
-    vec2 o = (r - 0.5) * 0.7 + 0.12 * vec2(sin(T * 0.6 + r.x * 6.28), cos(T * 0.4 + r.y * 6.28));
-    float m = smoothstep(0.07, 0.0, length(f - o)) * step(0.86, h1(id + 7.3 + float(k)));
-    float tw = 0.6 + 0.4 * sin(T * 2.0 + r.x * 30.0);
-    col += warm * m * tw * cone * 0.9 * (0.3 + 0.7 * S);
-  }
-
-  // ---- telones ----
-  float hw = 0.5 * (1.0 - O * 0.86);
-  float yb = 1.0 - uv.y;
-  float sway = sin(uv.y * 4.0 + T * 1.1) * 0.0025 + V * 0.05 * yb * yb * sin(uv.y * 2.5 + T * 2.0);
-  float breathe = sin(T * 0.7) * 0.002 * yb;
-  float edgeL = hw + sway + breathe;
-  float edgeR = 1.0 - hw - sway + breathe;
-
-  if (uv.x < edgeL) {
-    col = velvet(uv.x / edgeL, uv.y, edgeL, uv.x);
-  } else if (uv.x > edgeR) {
-    col = velvet((1.0 - uv.x) / (1.0 - edgeR), uv.y, 1.0 - edgeR, uv.x);
-  } else {
-    // sombra que proyectan los telones sobre el escenario
-    float sh = smoothstep(0.0, 0.05, uv.x - edgeL) * smoothstep(0.0, 0.05, edgeR - uv.x);
-    col *= 0.25 + 0.75 * sh;
-  }
-
-  // ---- bambalina superior con galón dorado ----
-  float scal = 0.905 - 0.028 * abs(sin(uv.x * 3.14159 * 5.0));
-  if (uv.y > scal) {
-    float u = fract(uv.x * 5.0);
-    vec3 v = velvet(u, uv.y, 0.2, uv.x) * 0.9;
-    float trim = smoothstep(0.012, 0.0, uv.y - scal);
-    float gli = 0.6 + 0.4 * sin(uv.x * 220.0 + T * 0.5) * sin(uv.x * 37.0);
-    v = mix(v, vec3(0.55, 0.40, 0.18) * gli, trim * 0.9);
-    col = v;
-  } else if (uv.y > scal - 0.022) {
-    // flecos
-    float fr = step(0.5, fract(gl_FragCoord.x / 3.0)) * smoothstep(scal - 0.022, scal, uv.y);
-    float wig = noise(vec2(gl_FragCoord.x * 0.3, T)) ;
-    col = mix(col, vec3(0.45, 0.32, 0.14) * (0.6 + 0.4 * wig), fr * 0.85);
-  }
-
-  // viñeta y grano
-  vec2 q = (uv - 0.5) * vec2(asp, 1.0);
-  col *= smoothstep(1.25, 0.25, length(q));
-  col += (h1(gl_FragCoord.xy + fract(T) * 100.0) - 0.5) * 0.018;
-  gl_FragColor = vec4(max(col, 0.0), 1.0);
-}`;
-const VERT = "attribute vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }";
-
-let U = {};
-if (gl) {
-  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
-  const prog = gl.createProgram();
-  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
-  gl.linkProgram(prog); gl.useProgram(prog);
-  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-  const loc = gl.getAttribLocation(prog, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  ["R","T","O","V","S"].forEach((n) => U[n] = gl.getUniformLocation(prog, n));
-}
-function resize() {
-  const scale = Math.min(window.devicePixelRatio || 1, 1.5) * (innerWidth < 700 ? 0.8 : 0.7);
-  canvas.width = Math.round(innerWidth * scale); canvas.height = Math.round(window.innerHeight * scale);
-  if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
-}
-resize(); addEventListener("resize", resize);
-addEventListener("scroll", () => { scrollDim = 1 - Math.min(scrollY / innerHeight, 1); }, { passive: true });
-
-let last = performance.now(), t0 = last;
+let t0 = performance.now(), last = t0;
+const ph = [Math.random() * 9, Math.random() * 9, Math.random() * 9];
+const flame = $("flame").style;
 function frame(now) {
-  const dt = Math.min((now - last) / 1000, 0.05); last = now;
-  // resorte apenas subamortiguado: el telón se abre, pasa un poco y se asienta
-  const k = 3.2, c = 3.0;
-  vel += (k * (target - open) - c * vel) * dt; open += vel * dt;
-  if (gl) {
-    gl.uniform2f(U.R, canvas.width, canvas.height);
-    gl.uniform1f(U.T, reduce ? 4.0 : (now - t0) / 1000);
-    gl.uniform1f(U.O, Math.max(0, Math.min(open, 1.04)));
-    gl.uniform1f(U.V, vel);
-    gl.uniform1f(U.S, scrollDim);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  }
+  const t = (now - t0) / 1000, dt = Math.min((now - last) / 1000, .05); last = now;
+  const k = reduce ? 1 : 1 - Math.pow(0.0009, dt); // suavizado igual a cualquier fps
+  const nx = lx + (tx - lx) * k, ny = ly + (ty - ly) * k;
+  vx = dt > 0 ? (nx - lx) / dt : 0; lx = nx; ly = ny;
+  // la llama se inclina en contra del movimiento
+  lean += (Math.max(-28, Math.min(28, -vx * 0.035)) - lean) * Math.min(1, dt * 8);
+  const speed = Math.min(Math.abs(vx) / 900, 1);
+  // parpadeo: suma de senos desfasados
+  const fl = reduce ? 0 : (Math.sin(t * 7.3 + ph[0]) * .5 + Math.sin(t * 13.1 + ph[1]) * .3 + Math.sin(t * 23.7 + ph[2]) * .2);
+  const base = Math.max(200, Math.min(Math.min(W(), H()) * 0.52, 380));
+  const r = base * (1 + fl * 0.035 - speed * 0.08);
+  root.setProperty("--lx", lx + "px"); root.setProperty("--ly", ly + "px");
+  root.setProperty("--r", r.toFixed(1) + "px"); root.setProperty("--rw", (r * 1.15).toFixed(1) + "px");
+  root.setProperty("--cx", (lx - 40) + "px"); root.setProperty("--cy", (ly - 8) + "px");
+  flame.setProperty("--lean", lean.toFixed(1) + "deg");
+  flame.setProperty("--fy", (1 + fl * 0.07 + speed * 0.25).toFixed(3));
+  flame.setProperty("--fs", (1 - speed * 0.15 - fl * 0.03).toFixed(3));
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
 /* =========================================================
-   Sonido: zumbido grave, crepitar de vinilo, telón y campana
+   Sonido: zumbido, la llama chisporrotea, papel y campana
    ========================================================= */
 let ctx, master, muted = false;
-function noiseBuffer(sec) {
-  const b = ctx.createBuffer(1, ctx.sampleRate * sec, ctx.sampleRate), d = b.getChannelData(0);
-  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-  return b;
-}
+function noiseBuf(sec) { const b = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * sec)), ctx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; }
 function startAudio() {
   try {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
     master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
-    master.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 2.5);
-    // zumbido
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 240; lp.connect(master);
-    const dg = ctx.createGain(); dg.gain.value = 0.06; dg.connect(lp);
-    [43.65, 43.9, 65.4, 87.3].forEach((f, i) => { const o = ctx.createOscillator(); o.type = i < 2 ? "sawtooth" : "triangle"; o.frequency.value = f; o.connect(dg); o.start(); });
-    const lfo = ctx.createOscillator(), la = ctx.createGain(); lfo.frequency.value = 0.07; la.gain.value = 110; lfo.connect(la); la.connect(lp.frequency); lfo.start();
-    // vinilo: siseo + chasquidos
-    const hiss = ctx.createBufferSource(); hiss.buffer = noiseBuffer(2); hiss.loop = true;
-    const hp = ctx.createBiquadFilter(); hp.type = "bandpass"; hp.frequency.value = 3200; hp.Q.value = .7;
-    const hg = ctx.createGain(); hg.gain.value = 0.012; hiss.connect(hp); hp.connect(hg); hg.connect(master); hiss.start();
-    const crackle = () => {
+    master.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 3);
+    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 260; lp.connect(master);
+    const g = ctx.createGain(); g.gain.value = 0.05; g.connect(lp);
+    [41.2, 41.5, 61.7, 82.4].forEach((f, i) => { const o = ctx.createOscillator(); o.type = i < 2 ? "sawtooth" : "sine"; o.frequency.value = f; o.connect(g); o.start(); });
+    const lfo = ctx.createOscillator(), la = ctx.createGain(); lfo.frequency.value = .06; la.gain.value = 120; lfo.connect(la); la.connect(lp.frequency); lfo.start();
+    // soplo de la llama
+    const air = ctx.createBufferSource(); air.buffer = noiseBuf(3); air.loop = true;
+    const bp = ctx.createBiquadFilter(); bp.type = "lowpass"; bp.frequency.value = 500;
+    const ag = ctx.createGain(); ag.gain.value = 0.02; air.connect(bp); bp.connect(ag); ag.connect(master); air.start();
+    const pop = () => {
       if (!ctx) return;
-      const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuffer(0.02);
-      const g = ctx.createGain(); g.gain.setValueAtTime(0.05 + Math.random() * 0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.015);
-      const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 1500;
-      s.connect(f); f.connect(g); g.connect(master); s.start(t);
-      setTimeout(crackle, 40 + Math.random() * 380);
+      const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuf(.03);
+      const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 900 + Math.random() * 2000; f.Q.value = 2;
+      const gg = ctx.createGain(); gg.gain.setValueAtTime(0.04 + Math.random() * 0.1, t); gg.gain.exponentialRampToValueAtTime(0.0001, t + .03);
+      s.connect(f); f.connect(gg); gg.connect(master); s.start(t);
+      setTimeout(pop, 120 + Math.random() * 1400);
     };
-    crackle();
+    pop();
     $("sound").hidden = false; renderSound();
   } catch (e) {}
 }
-function rustle() { // telón deslizándose
+function strike() { // cerillo
   if (!ctx) return;
-  const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuffer(4);
-  const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 0.6;
-  f.frequency.setValueAtTime(500, t); f.frequency.linearRampToValueAtTime(1400, t + 1.2); f.frequency.linearRampToValueAtTime(700, t + 3.5);
-  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 3.6);
-  s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + 4);
+  const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuf(1);
+  const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.frequency.setValueAtTime(3000, t); f.frequency.exponentialRampToValueAtTime(600, t + .6); f.Q.value = .8;
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + .02); g.gain.exponentialRampToValueAtTime(0.06, t + .25); g.gain.exponentialRampToValueAtTime(0.0001, t + .9);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + 1);
 }
-function bell(freq = 196, vol = 0.22) { // campana grave tipo FM
+function paper() {
   if (!ctx) return;
-  const t = ctx.currentTime, car = ctx.createOscillator(), mod = ctx.createOscillator(), mg = ctx.createGain(), g = ctx.createGain();
-  car.frequency.value = freq; mod.frequency.value = freq * 1.4;
-  mg.gain.setValueAtTime(freq * 2.2, t); mg.gain.exponentialRampToValueAtTime(1, t + 5);
-  mod.connect(mg); mg.connect(car.frequency);
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 6);
-  car.connect(g); g.connect(master); car.start(t); mod.start(t); car.stop(t + 6.2); mod.stop(t + 6.2);
+  const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = noiseBuf(.8);
+  const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 1800;
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t);
+  [0, .12, .3, .45].forEach((d, i) => { g.gain.exponentialRampToValueAtTime(0.12 - i * .02, t + d + .02); g.gain.exponentialRampToValueAtTime(0.01, t + d + .1); });
+  g.gain.exponentialRampToValueAtTime(0.0001, t + .75);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + .8);
+}
+function bell(freq = 147, vol = .22) {
+  if (!ctx) return;
+  const t = ctx.currentTime, c = ctx.createOscillator(), m = ctx.createOscillator(), mg = ctx.createGain(), g = ctx.createGain();
+  c.frequency.value = freq; m.frequency.value = freq * 1.4; mg.gain.setValueAtTime(freq * 2.2, t); mg.gain.exponentialRampToValueAtTime(1, t + 5);
+  m.connect(mg); mg.connect(c.frequency);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(0.0001, t + 6);
+  c.connect(g); g.connect(master); c.start(t); m.start(t); c.stop(t + 6.2); m.stop(t + 6.2);
 }
 function renderSound() {
   $("sound").setAttribute("aria-label", muted ? "Activar sonido" : "Silenciar");
@@ -470,56 +502,54 @@ function renderSound() {
     ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>'
     : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
 }
-$("sound").addEventListener("click", () => {
-  muted = !muted; renderSound();
-  if (ctx) master.gain.setTargetAtTime(muted ? 0 : 0.7, ctx.currentTime, .2);
-});
+$("sound").addEventListener("click", (e) => { e.stopPropagation(); muted = !muted; renderSound(); if (ctx) master.gain.setTargetAtTime(muted ? 0 : .7, ctx.currentTime, .2); });
 
-/* ---------- entrada ---------- */
-$("enter").addEventListener("click", () => {
-  startAudio();
+/* ---------- encender ---------- */
+const found = { mask: false, anti: false };
+let glintTimer;
+$("gate").addEventListener("click", () => {
+  startAudio(); strike();
   $("gate").classList.add("gone");
-  document.body.classList.remove("locked");
-  if (reduce) { open = target = 1; $("hero").classList.add("shown"); return; }
-  setTimeout(() => { target = 1; rustle(); }, 1400);
-  setTimeout(() => { $("hero").classList.add("shown"); bell(); }, 3000);
+  setTimeout(() => {
+    document.body.classList.add("lit");
+    if (!touch) document.body.classList.add("playing");
+  }, 450);
+  glintTimer = setTimeout(() => { if (!found.mask) $("glint").classList.add("on"); }, 14000);
 });
 
-/* ---------- juramento: mantener presionado ---------- */
-const oath = $("oath"); let holdStart = 0, holdRaf = 0, sworn = false, holding = false;
-const HOLD = 1800;
-function holdLoop() {
-  const p = Math.min((performance.now() - holdStart) / HOLD, 1);
-  oath.style.setProperty("--p", p);
-  if (p >= 1) { finishOath(); return; }
-  holdRaf = requestAnimationFrame(holdLoop);
+/* ---------- cartas ---------- */
+function openFrom(relic, veilId) {
+  const veil = $(veilId), card = veil.querySelector(".card");
+  const r = relic.getBoundingClientRect();
+  card.style.setProperty("--fx", (r.left + r.width / 2 - W() / 2) + "px");
+  card.style.setProperty("--fy2", (r.top + r.height / 2 - H() / 2) + "px");
+  document.body.classList.remove("playing");
+  veil.classList.add("open"); openCard = veil; opener = relic;
+  paper(); setTimeout(() => bell(), 500);
+  setTimeout(() => veil.querySelector("[data-close]").focus({ preventScroll: true }), 900);
 }
-function startHold(e) {
-  if (sworn || holding) return;
-  e.preventDefault(); holding = true;
-  oath.classList.add("holding"); holdStart = performance.now(); holdRaf = requestAnimationFrame(holdLoop);
-  if (navigator.vibrate) navigator.vibrate(20);
+function swapWriting(html) {
+  const w = $("writing"); w.classList.add("fade");
+  setTimeout(() => { w.innerHTML = html; w.classList.remove("fade"); }, 1200);
 }
-function cancelHold() {
-  holding = false;
-  if (sworn) return;
-  cancelAnimationFrame(holdRaf); oath.classList.remove("holding");
-  oath.style.setProperty("--p", 0);
+function closeCard() {
+  if (!openCard) return;
+  const id = openCard.id;
+  openCard.classList.remove("open"); openCard = null; paper();
+  if (!touch) document.body.classList.add("playing");
+  if (id === "veil1" && !found.anti) {
+    found.anti = true;
+    const a = $("anti"); a.classList.remove("asleep"); a.tabIndex = 0;
+    swapWriting('Ahora el antifaz<small>Sigue buscando</small>');
+  }
+  if (id === "veil2") swapWriting('Te esperamos<small>Toca la máscara o el antifaz para volver a leer</small>');
+  if (opener) opener.focus({ preventScroll: true });
 }
-function finishOath() {
-  sworn = true; holding = false; oath.classList.remove("holding"); oath.classList.add("done");
-  $("oathText").textContent = "Juramento sellado";
-  if (navigator.vibrate) navigator.vibrate([40, 60, 120]);
-  bell(147, 0.3);
-  setTimeout(() => { location.href = waUrl; }, 900);
-  setTimeout(() => { sworn = false; oath.classList.remove("done"); oath.style.setProperty("--p", 0); $("oathText").textContent = "Mantén presionado para jurar"; }, 6000);
-}
-oath.addEventListener("pointerdown", startHold);
-["pointerup", "pointerleave", "pointercancel"].forEach((ev) => oath.addEventListener(ev, cancelHold));
-oath.addEventListener("contextmenu", (e) => e.preventDefault());
-oath.addEventListener("keydown", (e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) startHold(e); });
-oath.addEventListener("keyup", (e) => { if (e.key === " " || e.key === "Enter") cancelHold(); });
-oath.addEventListener("click", (e) => e.preventDefault());
+$("mask").addEventListener("click", () => { found.mask = true; clearTimeout(glintTimer); $("glint").classList.remove("on"); openFrom($("mask"), "veil1"); });
+$("anti").addEventListener("click", () => openFrom($("anti"), "veil2"));
+document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", closeCard));
+document.querySelectorAll(".veil").forEach((v) => v.addEventListener("click", (e) => { if (e.target === v) closeCard(); }));
+addEventListener("keydown", (e) => { if (e.key === "Escape") closeCard(); });
 </script>
 </body>
 </html>
